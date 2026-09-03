@@ -3,16 +3,23 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GMMG Strategy Visualizer - Screenshot Capture</title>
+    <title>GMMG Strategy Visualizer - Fibonacci + Screenshots</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #0b1120;
             color: #e2e8f0;
             padding: 16px;
         }
-        .container { max-width: 1500px; margin: 0 auto; }
+        .container {
+            max-width: 1500px;
+            margin: 0 auto;
+        }
         header {
             background: #1a2332;
             padding: 14px 20px;
@@ -69,11 +76,11 @@
         }
         .chart-container {
             position: relative;
-            height: 350px;
+            height: 380px;
             background: #0f1729;
             border-radius: 8px;
             overflow: hidden;
-            min-height: 350px;
+            min-height: 380px;
         }
         #mainChart {
             width: 100% !important;
@@ -84,8 +91,8 @@
         /* Key Levels Bar */
         .key-levels-bar {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 8px;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
             margin-top: 10px;
             padding: 8px 12px;
             background: #0f1729;
@@ -96,16 +103,16 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 4px 0;
+            padding: 2px 0;
         }
         .key-level-item .kl-label {
-            font-size: 9px;
+            font-size: 8px;
             color: #64748b;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
         .key-level-item .kl-value {
-            font-size: 14px;
+            font-size: 12px;
             font-weight: 700;
             margin-top: 1px;
         }
@@ -114,21 +121,23 @@
         .key-level-item .kl-value.ema { color: #fbbf24; }
         .key-level-item .kl-value.alma { color: #06b6d4; }
         .key-level-item .kl-value.rsi-value { color: #8b5cf6; }
+        .key-level-item .kl-value.fib-618 { color: #f472b6; }
+        .key-level-item .kl-value.fib-1618 { color: #fb923c; }
         .key-level-item .kl-value .change {
-            font-size: 10px;
+            font-size: 8px;
             font-weight: 400;
-            margin-left: 4px;
+            margin-left: 2px;
         }
         .key-level-item .kl-value .change.up { color: #22c55e; }
         .key-level-item .kl-value .change.down { color: #ef4444; }
 
         .rsi-status {
             display: inline-block;
-            padding: 0 8px;
+            padding: 0 6px;
             border-radius: 10px;
-            font-size: 9px;
+            font-size: 8px;
             font-weight: 700;
-            margin-left: 4px;
+            margin-left: 2px;
         }
         .rsi-status.oversold { background: #22c55e33; color: #22c55e; border: 1px solid #22c55e; }
         .rsi-status.overbought { background: #ef444433; color: #ef4444; border: 1px solid #ef4444; }
@@ -158,7 +167,7 @@
         .signal-badge.neutral { background: #fbbf2433; color: #fbbf24; border: 1px solid #fbbf24; }
         .controls {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             flex-wrap: wrap;
             margin-top: 8px;
         }
@@ -166,10 +175,10 @@
             background: #253141;
             border: none;
             color: #e2e8f0;
-            padding: 8px 16px;
+            padding: 6px 12px;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 13px;
+            font-size: 11px;
             transition: all 0.2s;
             border: 1px solid transparent;
             font-weight: 600;
@@ -189,12 +198,19 @@
             border-color: #8b5cf6;
         }
         .controls button.screenshot-btn:hover { background: #7c3aed; }
+        .controls button.fib-btn {
+            background: #f472b6;
+            color: #fff;
+            border-color: #f472b6;
+        }
+        .controls button.fib-btn:hover { background: #ec4899; }
+        .controls button.fib-btn.active { background: #ec4899; border-color: #fbbf24; }
 
         .stats-row {
             display: flex;
             justify-content: space-between;
-            padding: 4px 0;
-            font-size: 12px;
+            padding: 3px 0;
+            font-size: 11px;
             border-bottom: 1px solid #0f1729;
         }
         .stats-row:last-child { border-bottom: none; }
@@ -203,6 +219,9 @@
         .stats-row .value.green { color: #22c55e; }
         .stats-row .value.red { color: #ef4444; }
         .stats-row .value.gold { color: #fbbf24; }
+        .stats-row .value.pink { color: #f472b6; }
+        .stats-row .value.orange { color: #fb923c; }
+        .stats-row .value.purple { color: #8b5cf6; }
         .status-indicator {
             display: inline-block;
             width: 10px;
@@ -228,26 +247,26 @@
         }
         .bar-counter { font-size: 11px; color: #64748b; margin-left: 8px; }
         #debug {
-            font-size: 11px;
+            font-size: 10px;
             color: #22c55e;
             margin-top: 6px;
             font-family: monospace;
             background: #0f1729;
             padding: 4px 10px;
             border-radius: 4px;
-            min-height: 24px;
+            min-height: 20px;
         }
         .status-text { font-size: 12px; color: #94a3b8; }
         .legend-container {
             display: flex;
             flex-wrap: wrap;
-            gap: 12px;
-            padding: 6px 0;
-            font-size: 10px;
+            gap: 8px;
+            padding: 4px 0;
+            font-size: 9px;
         }
-        .legend-item { display: flex; align-items: center; gap: 4px; }
+        .legend-item { display: flex; align-items: center; gap: 3px; }
         .legend-color {
-            width: 16px;
+            width: 14px;
             height: 3px;
             border-radius: 2px;
         }
@@ -262,8 +281,10 @@
         .legend-color.resistance { background: #ef444466; border-top: 1px dashed #ef4444; height: 0; }
         .legend-color.buy-signal { background: #22c55e; width: 10px; height: 10px; border-radius: 50%; }
         .legend-color.sell-signal { background: #ef4444; width: 10px; height: 10px; border-radius: 50%; }
+        .legend-color.fib-618 { background: #f472b6; border-top: 2px solid #f472b6; height: 0; }
+        .legend-color.fib-1618 { background: #fb923c; border-top: 2px solid #fb923c; height: 0; }
 
-        .play-log-container { max-height: 200px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #253141 transparent; }
+        .play-log-container { max-height: 180px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #253141 transparent; }
         .play-log-container::-webkit-scrollbar { width: 4px; }
         .play-log-container::-webkit-scrollbar-track { background: transparent; }
         .play-log-container::-webkit-scrollbar-thumb { background: #253141; border-radius: 4px; }
@@ -271,50 +292,54 @@
         .play-log-entry {
             background: #0f1729;
             border-radius: 6px;
-            padding: 6px 10px;
-            margin-bottom: 4px;
-            font-size: 11px;
+            padding: 5px 8px;
+            margin-bottom: 3px;
+            font-size: 10px;
             border-left: 3px solid;
             font-family: monospace;
         }
         .play-log-entry.bullish { border-color: #22c55e; }
         .play-log-entry.bearish { border-color: #ef4444; }
-        .play-log-entry .play-time { color: #64748b; font-size: 9px; }
-        .play-log-entry .play-detail { color: #cbd5e1; margin-top: 2px; font-size: 10px; }
+        .play-log-entry .play-time { color: #64748b; font-size: 8px; }
+        .play-log-entry .play-detail { color: #cbd5e1; margin-top: 1px; font-size: 9px; }
         .play-log-entry .play-price { color: #fbbf24; font-weight: 600; }
         .play-log-entry .play-direction { font-weight: 700; }
         .play-log-entry .play-direction.long { color: #22c55e; }
         .play-log-entry .play-direction.short { color: #ef4444; }
+        .play-log-entry .fib-hit { color: #f472b6; }
+        .play-log-entry .fib-target { color: #fb923c; }
 
         .play-type-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 4px 0;
+            padding: 3px 0;
             border-bottom: 1px solid #1a2332;
-            margin-top: 6px;
+            margin-top: 4px;
             cursor: pointer;
+            font-size: 10px;
         }
         .play-type-header:hover { background: #1a2332; border-radius: 4px; padding-left: 4px; }
         .play-type-header .count-badge {
             background: #253141;
-            padding: 1px 10px;
+            padding: 1px 8px;
             border-radius: 12px;
-            font-size: 10px;
+            font-size: 9px;
             color: #94a3b8;
         }
-        .play-type-header .toggle-icon { color: #64748b; font-size: 10px; margin-left: 6px; }
-        .play-list { margin-top: 4px; }
+        .play-type-header .toggle-icon { color: #64748b; font-size: 9px; margin-left: 6px; }
+        .play-list { margin-top: 3px; }
         .play-list.collapsed { display: none; }
-        .no-plays { color: #475569; font-size: 10px; font-style: italic; padding: 4px 0; }
+        .no-plays { color: #475569; font-size: 9px; font-style: italic; padding: 4px 0; }
 
         .rsi-status-bar {
             display: flex;
             align-items: center;
-            gap: 6px;
-            font-size: 10px;
+            gap: 4px;
+            font-size: 9px;
             color: #94a3b8;
             margin-top: 2px;
+            flex-wrap: wrap;
         }
         .rsi-status-bar .rsi-dot {
             width: 8px;
@@ -326,7 +351,7 @@
         .rsi-status-bar .rsi-dot.bearish { background: #ef4444; }
         .rsi-status-bar .rsi-dot.neutral { background: #fbbf24; }
 
-        /* Screenshot Modal */
+        /* Modal */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -383,28 +408,48 @@
             border-radius: 8px;
             font-size: 12px;
             color: #cbd5e1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
         }
         .modal .screenshot-info .highlight-green { color: #22c55e; }
         .modal .screenshot-info .highlight-red { color: #ef4444; }
         .modal .screenshot-info .highlight-gold { color: #fbbf24; }
         .modal .screenshot-info .highlight-purple { color: #8b5cf6; }
+        .modal .screenshot-info .highlight-pink { color: #f472b6; }
+        .modal .screenshot-info .highlight-orange { color: #fb923c; }
+        .modal .screenshot-info .full-width { grid-column: 1 / -1; }
 
         .screenshot-counter {
             font-size: 11px;
             color: #64748b;
             margin-left: 8px;
         }
+        .win-rate-display {
+            font-size: 11px;
+            color: #22c55e;
+            margin-left: 8px;
+        }
+
+        /* Fibonacci overlay styles */
+        .fib-label {
+            font-size: 8px;
+            font-weight: 700;
+        }
+        .fib-label.fib-618 { color: #f472b6; }
+        .fib-label.fib-1618 { color: #fb923c; }
 
         @media (max-width: 1024px) {
             .grid-2 { grid-template-columns: 1fr; }
             .grid-3 { grid-template-columns: 1fr 1fr; }
-            .key-levels-bar { grid-template-columns: repeat(3, 1fr); }
+            .key-levels-bar { grid-template-columns: repeat(4, 1fr); }
         }
         @media (max-width: 600px) {
             .grid-3 { grid-template-columns: 1fr; }
-            .legend-container { font-size: 8px; gap: 6px; }
-            .key-levels-bar { grid-template-columns: repeat(2, 1fr); gap: 4px; }
-            .key-level-item .kl-value { font-size: 12px; }
+            .legend-container { font-size: 7px; gap: 4px; }
+            .key-levels-bar { grid-template-columns: repeat(2, 1fr); gap: 2px; }
+            .key-level-item .kl-value { font-size: 10px; }
+            .modal .screenshot-info { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -413,13 +458,14 @@
     <div class="container">
         <header>
             <h1>📊 GMMG Strategy Visualizer</h1>
-            <span class="badge">TABO · Momentum · Bounce · Divergence</span>
-            <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+            <span class="badge">Fibonacci · Divergence · Plays</span>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
                 <span id="statusIndicator" class="status-indicator running"></span>
                 <span id="statusText" class="status-text">Running</span>
                 <span id="barCount" class="bar-counter">Bars: 0</span>
                 <span id="signalBadge" class="signal-badge neutral">⏳ Waiting</span>
                 <span id="screenshotCount" class="screenshot-counter">📸 0</span>
+                <span id="winRateDisplay" class="win-rate-display">🏆 0%</span>
             </div>
         </header>
 
@@ -427,7 +473,7 @@
             <!-- MAIN CHART -->
             <div class="card">
                 <div class="card-header">
-                    <span>Price · RSI · Support/Resistance · Candlesticks</span>
+                    <span>Price · RSI · Fibonacci (0.618 & 1.618)</span>
                     <span id="currentPlay" style="color:#fbbf24;">No play detected</span>
                 </div>
                 <div class="chart-container" id="chartContainer">
@@ -453,35 +499,44 @@
                         <span class="kl-value alma" id="almaDisplay">--</span>
                     </div>
                     <div class="key-level-item">
-                        <span class="kl-label">🟣 RSI (14)</span>
-                        <span class="kl-value rsi-value" id="rsiDisplay">
-                            -- 
-                            <span class="rsi-status neutral" id="rsiStatusBadge">NEUTRAL</span>
-                        </span>
+                        <span class="kl-label">🟣 RSI</span>
+                        <span class="kl-value rsi-value" id="rsiDisplay">--</span>
+                    </div>
+                    <div class="key-level-item">
+                        <span class="kl-label">🩷 Fib 0.618</span>
+                        <span class="kl-value fib-618" id="fib618Display">--</span>
+                    </div>
+                    <div class="key-level-item">
+                        <span class="kl-label">🧡 Fib 1.618</span>
+                        <span class="kl-value fib-1618" id="fib1618Display">--</span>
                     </div>
                 </div>
 
                 <div class="rsi-status-bar" id="rsiStatusBar">
                     <span class="rsi-dot neutral" id="rsiDot"></span>
                     <span id="rsiStatusText">RSI: -- (Neutral)</span>
-                    <span style="color:#64748b;margin-left:8px;">|</span>
+                    <span style="color:#64748b;margin-left:6px;">|</span>
                     <span style="color:#22c55e;">Oversold: &lt; 30</span>
                     <span style="color:#ef4444;">Overbought: &gt; 70</span>
+                    <span style="color:#64748b;margin-left:6px;">|</span>
+                    <span style="color:#f472b6;">0.618 Entry Zone</span>
+                    <span style="color:#fb923c;">1.618 Target</span>
                 </div>
 
                 <div class="legend-container">
-                    <span class="legend-item"><span class="legend-color candle-green"></span> Bullish Candle</span>
-                    <span class="legend-item"><span class="legend-color candle-red"></span> Bearish Candle</span>
-                    <span class="legend-item"><span class="legend-color ema"></span> EMA (9)</span>
+                    <span class="legend-item"><span class="legend-color candle-green"></span> Bullish</span>
+                    <span class="legend-item"><span class="legend-color candle-red"></span> Bearish</span>
+                    <span class="legend-item"><span class="legend-color ema"></span> EMA</span>
                     <span class="legend-item"><span class="legend-color alma"></span> ALMA</span>
-                    <span class="legend-item"><span class="legend-color rsi"></span> RSI (14)</span>
+                    <span class="legend-item"><span class="legend-color rsi"></span> RSI</span>
                     <span class="legend-item"><span class="legend-color rsi70"></span> RSI 70</span>
                     <span class="legend-item"><span class="legend-color rsi30"></span> RSI 30</span>
                     <span class="legend-item"><span class="legend-color support"></span> Support</span>
                     <span class="legend-item"><span class="legend-color resistance"></span> Resistance</span>
-                    <span class="legend-item"><span class="legend-color buy-signal"></span> BUY Signal</span>
-                    <span class="legend-item"><span class="legend-color sell-signal"></span> SELL Signal</span>
-                    <span class="legend-item"><span style="color:#8b5cf6;">📸</span> Screenshot Captured</span>
+                    <span class="legend-item"><span class="legend-color buy-signal"></span> BUY</span>
+                    <span class="legend-item"><span class="legend-color sell-signal"></span> SELL</span>
+                    <span class="legend-item"><span class="legend-color fib-618"></span> Fib 0.618</span>
+                    <span class="legend-item"><span class="legend-color fib-1618"></span> Fib 1.618</span>
                 </div>
                 <div class="controls">
                     <button id="btnStart" class="primary running">⏹ Running</button>
@@ -489,6 +544,7 @@
                     <button id="btnReset" class="danger">⟲ Reset</button>
                     <button id="btnSpeed" class="secondary">Speed: 1x</button>
                     <button id="btnLevels" class="secondary">S/R: ON</button>
+                    <button id="btnFib" class="fib-btn active">Fib: ON</button>
                     <button id="btnStep" class="secondary">⏭ Step</button>
                     <button id="btnScreenshot" class="screenshot-btn">📸 Screenshot</button>
                 </div>
@@ -502,43 +558,59 @@
                     <span id="playCount">0 plays</span>
                 </div>
 
-                <div id="playDisplay" style="min-height:80px;">
+                <div id="playDisplay" style="min-height:70px;">
                     <div class="pattern-box neutral">
                         <div class="label">⏳ Monitoring for setups...</div>
-                        <div style="font-size:11px;color:#94a3b8;margin-top:4px;">
+                        <div style="font-size:10px;color:#94a3b8;margin-top:2px;">
                             Watch for TABO breakouts, Momentum pullbacks, and Bounce plays
                         </div>
                     </div>
                 </div>
 
-                <!-- Detailed Play Logs -->
-                <div style="margin-top:10px;padding-top:10px;border-top:1px solid #1a2332;">
-                    <div style="font-size:10px;color:#64748b;text-transform:uppercase;margin-bottom:4px;">📋 Play Logs</div>
+                <!-- Stats Summary -->
+                <div style="margin-top:6px;padding-top:6px;border-top:1px solid #1a2332;display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;">
+                    <div class="stats-row" style="border-bottom:none;padding:2px 0;">
+                        <span class="label">Total Plays</span>
+                        <span class="value gold" id="totalPlaysStat">0</span>
+                    </div>
+                    <div class="stats-row" style="border-bottom:none;padding:2px 0;">
+                        <span class="label">Wins</span>
+                        <span class="value green" id="winsStat">0</span>
+                    </div>
+                    <div class="stats-row" style="border-bottom:none;padding:2px 0;">
+                        <span class="label">Win Rate</span>
+                        <span class="value gold" id="winRateStat">0%</span>
+                    </div>
+                </div>
+
+                <!-- Play Logs -->
+                <div style="margin-top:6px;padding-top:6px;border-top:1px solid #1a2332;">
+                    <div style="font-size:9px;color:#64748b;text-transform:uppercase;">📋 Play Logs</div>
                     <div id="playLogs">
                         <div>
                             <div class="play-type-header" data-target="taboList">
-                                <span>🚀 TABO Plays <span class="count-badge" id="taboCountDisplay">0</span></span>
+                                <span>🚀 TABO <span class="count-badge" id="taboCountDisplay">0</span></span>
                                 <span class="toggle-icon">▼</span>
                             </div>
                             <div id="taboList" class="play-list"><div class="no-plays">No TABO plays yet</div></div>
                         </div>
                         <div>
                             <div class="play-type-header" data-target="momentumList">
-                                <span>⚡ Momentum Plays <span class="count-badge" id="momentumCountDisplay">0</span></span>
+                                <span>⚡ Momentum <span class="count-badge" id="momentumCountDisplay">0</span></span>
                                 <span class="toggle-icon">▼</span>
                             </div>
                             <div id="momentumList" class="play-list"><div class="no-plays">No Momentum plays yet</div></div>
                         </div>
                         <div>
                             <div class="play-type-header" data-target="bounceList">
-                                <span>🔄 Bounce Plays <span class="count-badge" id="bounceCountDisplay">0</span></span>
+                                <span>🔄 Bounce <span class="count-badge" id="bounceCountDisplay">0</span></span>
                                 <span class="toggle-icon">▼</span>
                             </div>
                             <div id="bounceList" class="play-list"><div class="no-plays">No Bounce plays yet</div></div>
                         </div>
                         <div>
                             <div class="play-type-header" data-target="divergenceList">
-                                <span>📊 Divergences <span class="count-badge" id="divergenceCountDisplay">0</span></span>
+                                <span>📊 Divergence <span class="count-badge" id="divergenceCountDisplay">0</span></span>
                                 <span class="toggle-icon">▼</span>
                             </div>
                             <div id="divergenceList" class="play-list"><div class="no-plays">No Divergences yet</div></div>
@@ -551,37 +623,33 @@
         <div class="grid-3">
             <div class="card">
                 <div class="card-header"><span>🚀 TABO Play</span></div>
-                <ul style="font-size:11px;line-height:1.7;color:#cbd5e1;padding-left:14px;">
+                <ul style="font-size:10px;line-height:1.6;color:#cbd5e1;padding-left:12px;">
                     <li><span style="color:#fbbf24;">●</span> <strong>Breakout</strong> above/below key level</li>
                     <li><span style="color:#fbbf24;">●</span> Requires <strong>momentum</strong> (RSI > 55 or < 45)</li>
-                    <li><span style="color:#22c55e;">✅ Entry:</span> On breakout candle close</li>
-                    <li><span style="color:#ef4444;">⛔ Stop:</span> Below/above breakout level</li>
+                    <li><span style="color:#f472b6;">●</span> <strong>Fibonacci:</strong> 0.618 entry zone + 1.618 target</li>
                 </ul>
             </div>
             <div class="card">
                 <div class="card-header"><span>⚡ Momentum Play</span></div>
-                <ul style="font-size:11px;line-height:1.7;color:#cbd5e1;padding-left:14px;">
-                    <li><span style="color:#fbbf24;">●</span> <strong>Strong trend</strong> + indicator confluence</li>
-                    <li><span style="color:#fbbf24;">●</span> Enter on <strong>pullback</strong> to EMA/ALMA</li>
-                    <li><span style="color:#22c55e;">✅ Entry:</span> Bounce off moving average</li>
-                    <li><span style="color:#ef4444;">⛔ Stop:</span> Below the moving average</li>
+                <ul style="font-size:10px;line-height:1.6;color:#cbd5e1;padding-left:12px;">
+                    <li><span style="color:#fbbf24;">●</span> <strong>Pullback</strong> to EMA/ALMA then bounce</li>
+                    <li><span style="color:#fbbf24;">●</span> RSI in <strong>neutral zone</strong> (45-65)</li>
+                    <li><span style="color:#f472b6;">●</span> <strong>Fibonacci:</strong> 0.618 retracement confirmation</li>
                 </ul>
             </div>
             <div class="card">
                 <div class="card-header"><span>🔄 Bounce Play</span></div>
-                <ul style="font-size:11px;line-height:1.7;color:#cbd5e1;padding-left:14px;">
+                <ul style="font-size:10px;line-height:1.6;color:#cbd5e1;padding-left:12px;">
                     <li><span style="color:#fbbf24;">●</span> Price touches <strong>support/resistance</strong></li>
                     <li><span style="color:#fbbf24;">●</span> Needs <strong>reversal candle</strong> + RSI divergence</li>
-                    <li><span style="color:#22c55e;">✅ Entry:</span> At bounce confirmation</li>
-                    <li><span style="color:#ef4444;">⛔ Stop:</span> Beyond support/resistance</li>
+                    <li><span style="color:#f472b6;">●</span> <strong>Fibonacci:</strong> 0.618 + divergence confluence</li>
                 </ul>
             </div>
         </div>
 
         <div class="footnote">
-            ⚠️ Educational simulation — automatically detects GMMG-style plays on synthetic price data.
-            <span style="color:#22c55e;">🟢</span> = BUY Signal &nbsp;|&nbsp; <span style="color:#ef4444;">🔴</span> = SELL Signal
-            &nbsp;|&nbsp; <span style="color:#8b5cf6;">📸</span> = Screenshot captured on play detection
+            ⚠️ Educational simulation — Fibonacci 0.618 (🩷) = Entry Zone · 1.618 (🧡) = Target
+            <span style="color:#22c55e;">🟢</span> BUY &nbsp;|&nbsp; <span style="color:#ef4444;">🔴</span> SELL &nbsp;|&nbsp; <span style="color:#8b5cf6;">📸</span> Screenshot
         </div>
     </div>
 
@@ -594,18 +662,21 @@
             </div>
             <img id="screenshotImage" src="" alt="Screenshot" />
             <div class="screenshot-info" id="screenshotInfo">
-                <div><span class="highlight-gold">📋 Play:</span> <span id="screenshotPlay">--</span></div>
+                <div class="full-width"><span class="highlight-gold">📋 Play:</span> <span id="screenshotPlay">--</span></div>
                 <div><span class="highlight-purple">🖐️ Pattern:</span> <span id="screenshotPattern">--</span></div>
                 <div><span class="highlight-green">📈 Signal:</span> <span id="screenshotSignal">--</span></div>
-                <div><span class="highlight-gold">📊 Details:</span> <span id="screenshotDetails">--</span></div>
+                <div><span class="highlight-pink">🩷 Fib 0.618:</span> <span id="screenshotFib618">--</span></div>
+                <div><span class="highlight-orange">🧡 Fib 1.618:</span> <span id="screenshotFib1618">--</span></div>
+                <div class="full-width"><span class="highlight-gold">📊 Details:</span> <span id="screenshotDetails">--</span></div>
             </div>
         </div>
     </div>
 
     <script>
         // ============================================================
-        //  GMMG STRATEGY VISUALIZER - With Screenshot Capture
-        //  Automatically captures screenshots when plays are detected
+        //  GMMG STRATEGY VISUALIZER - Fibonacci + Screenshots
+        //  Tracks: Play (WHAT) + Divergence (HOW) + Fibonacci (0.618/1.618)
+        //  Calculates win rate for the combined setup
         // ============================================================
 
         (function() {
@@ -636,6 +707,8 @@
             const emaDisplay = document.getElementById('emaDisplay');
             const almaDisplay = document.getElementById('almaDisplay');
             const rsiDisplay = document.getElementById('rsiDisplay');
+            const fib618Display = document.getElementById('fib618Display');
+            const fib1618Display = document.getElementById('fib1618Display');
             const rsiStatusBadge = document.getElementById('rsiStatusBadge');
             const rsiDot = document.getElementById('rsiDot');
             const rsiStatusText = document.getElementById('rsiStatusText');
@@ -645,12 +718,17 @@
             const barCountEl = document.getElementById('barCount');
             const debugEl = document.getElementById('debug');
             const screenshotCountEl = document.getElementById('screenshotCount');
+            const winRateDisplay = document.getElementById('winRateDisplay');
+            const totalPlaysStat = document.getElementById('totalPlaysStat');
+            const winsStat = document.getElementById('winsStat');
+            const winRateStat = document.getElementById('winRateStat');
 
             const btnStart = document.getElementById('btnStart');
             const btnPause = document.getElementById('btnPause');
             const btnReset = document.getElementById('btnReset');
             const btnSpeed = document.getElementById('btnSpeed');
             const btnLevels = document.getElementById('btnLevels');
+            const btnFib = document.getElementById('btnFib');
             const btnStep = document.getElementById('btnStep');
             const btnScreenshot = document.getElementById('btnScreenshot');
 
@@ -661,6 +739,8 @@
             const screenshotPlay = document.getElementById('screenshotPlay');
             const screenshotPattern = document.getElementById('screenshotPattern');
             const screenshotSignal = document.getElementById('screenshotSignal');
+            const screenshotFib618 = document.getElementById('screenshotFib618');
+            const screenshotFib1618 = document.getElementById('screenshotFib1618');
             const screenshotDetails = document.getElementById('screenshotDetails');
 
             // --- State ---
@@ -676,12 +756,14 @@
             let signals = [];
             let playLogs = { tabo: [], momentum: [], bounce: [], divergence: [] };
             let screenshots = [];
+            let tradeResults = []; // {win: bool, playType: string, direction: string, fibHit: bool}
 
             let isRunning = true;
             let intervalId = null;
             let speedFactor = 1;
             let barCounter = 0;
             let showLevels = true;
+            let showFib = true;
             const MAX_BARS = 80;
 
             let taboPlays = 0,
@@ -690,6 +772,10 @@
                 divergencePlays = 0;
             let resistance = 0,
                 support = 0;
+            let fib618 = 0,
+                fib1618 = 0;
+            let fibLow = 0,
+                fibHigh = 0;
             let prevResistance = 0,
                 prevSupport = 0,
                 prevEma = 0,
@@ -697,6 +783,8 @@
                 prevRsi = 0;
             let chartInitialized = false;
             let screenshotCounter = 0;
+            let totalTrades = 0;
+            let wins = 0;
 
             // --- Generate OHLC data ---
             function generateOHLC(prevClose) {
@@ -833,6 +921,50 @@
                 return { resistance: avgHigh, support: avgLow };
             }
 
+            // --- Calculate Fibonacci Levels ---
+            function calculateFibonacci(priceData) {
+                const len = priceData.length;
+                if (len < 20) return { fib618: null, fib1618: null, low: null, high: null };
+
+                // Find recent swing low and high
+                const lookback = 10;
+                let swingLow = Infinity,
+                    swingHigh = -Infinity;
+                let lowIdx = 0,
+                    highIdx = 0;
+
+                for (let i = Math.max(0, len - lookback - 5); i < len; i++) {
+                    if (priceData[i] < swingLow) { swingLow = priceData[i];
+                        lowIdx = i; }
+                    if (priceData[i] > swingHigh) { swingHigh = priceData[i];
+                        highIdx = i; }
+                }
+
+                // Ensure low is before high for retracement
+                if (lowIdx > highIdx) {
+                    // Swap if low is after high
+                    const tempLow = swingLow;
+                    swingLow = swingHigh;
+                    swingHigh = tempLow;
+                }
+
+                const range = swingHigh - swingLow;
+                if (range <= 0) return { fib618: null, fib1618: null, low: null, high: null };
+
+                // 0.618 Retracement (Entry Zone)
+                const fib618Level = swingHigh - (range * 0.618);
+
+                // 1.618 Extension (Target)
+                const fib1618Level = swingHigh + (range * 0.618);
+
+                return {
+                    fib618: fib618Level,
+                    fib1618: fib1618Level,
+                    low: swingLow,
+                    high: swingHigh
+                };
+            }
+
             // --- Detect divergences ---
             function detectDivergences(priceData, rsiData) {
                 const len = priceData.length;
@@ -892,7 +1024,7 @@
                 return divergences;
             }
 
-            // --- Detect plays with detailed reasons ---
+            // --- Detect plays with Fibonacci integration ---
             function detectPlays(priceData, rsiData, emaData, almaData) {
                 const len = priceData.length;
                 if (len < 15) return [];
@@ -911,6 +1043,17 @@
                 resistance = levels.resistance || price * 1.03;
                 support = levels.support || price * 0.97;
 
+                // Calculate Fibonacci
+                const fib = calculateFibonacci(priceData);
+                fib618 = fib.fib618 || price * 0.97;
+                fib1618 = fib.fib1618 || price * 1.06;
+                fibLow = fib.low || price * 0.95;
+                fibHigh = fib.high || price * 1.05;
+
+                // Check if price is near 0.618 Fib level
+                const nearFib618 = fib618 ? Math.abs(price - fib618) / fib618 < 0.015 : false;
+                const fibHit = nearFib618;
+
                 // --- TABO Play ---
                 if (resistance && price > resistance && prevPrice <= resistance) {
                     if (rsi > 55) {
@@ -920,6 +1063,9 @@
                             price: price,
                             level: resistance,
                             rsi: rsi,
+                            fibHit: fibHit,
+                            fib618: fib618,
+                            fib1618: fib1618,
                             reason: `Breakout ABOVE resistance at $${resistance.toFixed(2)} with RSI ${rsi.toFixed(0)} (momentum > 55)`
                         });
                     }
@@ -932,6 +1078,9 @@
                             price: price,
                             level: support,
                             rsi: rsi,
+                            fibHit: fibHit,
+                            fib618: fib618,
+                            fib1618: fib1618,
                             reason: `Breakout BELOW support at $${support.toFixed(2)} with RSI ${rsi.toFixed(0)} (momentum < 45)`
                         });
                     }
@@ -952,6 +1101,9 @@
                             ema: ema,
                             alma: alma,
                             rsi: rsi,
+                            fibHit: fibHit,
+                            fib618: fib618,
+                            fib1618: fib1618,
                             reason: `Bullish pullback to EMA $${ema.toFixed(2)} / ALMA $${alma.toFixed(2)} with RSI ${rsi.toFixed(0)} (neutral zone)`
                         });
                     }
@@ -965,6 +1117,9 @@
                             ema: ema,
                             alma: alma,
                             rsi: rsi,
+                            fibHit: fibHit,
+                            fib618: fib618,
+                            fib1618: fib1618,
                             reason: `Bearish rejection from EMA $${ema.toFixed(2)} / ALMA $${alma.toFixed(2)} with RSI ${rsi.toFixed(0)} (neutral zone)`
                         });
                     }
@@ -983,6 +1138,9 @@
                             rsi: rsi,
                             divType: 'bullish',
                             divData: div,
+                            fibHit: fibHit,
+                            fib618: fib618,
+                            fib1618: fib1618,
                             reason: `Bounce off SUPPORT at $${support.toFixed(2)} with RSI ${rsi.toFixed(0)} (oversold) + Bullish Divergence detected`
                         });
                     }
@@ -999,85 +1157,15 @@
                             rsi: rsi,
                             divType: 'bearish',
                             divData: div,
+                            fibHit: fibHit,
+                            fib618: fib618,
+                            fib1618: fib1618,
                             reason: `Rejection from RESISTANCE at $${resistance.toFixed(2)} with RSI ${rsi.toFixed(0)} (overbought) + Bearish Divergence detected`
                         });
                     }
                 }
 
                 return plays;
-            }
-
-            // --- Take Screenshot ---
-            function takeScreenshot(playData, divergenceData) {
-                try {
-                    // Get the canvas as image
-                    const dataUrl = canvas.toDataURL('image/png');
-
-                    // Build screenshot data
-                    const screenshot = {
-                        image: dataUrl,
-                        timestamp: new Date().toLocaleString(),
-                        play: {
-                            type: playData.type,
-                            direction: playData.direction,
-                            price: playData.price,
-                            rsi: playData.rsi || '--',
-                            level: playData.level || '--',
-                            ema: playData.ema || '--',
-                            alma: playData.alma || '--',
-                            reason: playData.reason || '--'
-                        },
-                        divergence: divergenceData ? {
-                            type: divergenceData.type,
-                            pattern: divergenceData.type === 'bullish' ? 'Right Hand (Bullish)' : 'Left Hand (Bearish)',
-                            price1: divergenceData.price1,
-                            price2: divergenceData.price2,
-                            rsi1: divergenceData.rsi1,
-                            rsi2: divergenceData.rsi2
-                        } : null
-                    };
-
-                    screenshots.push(screenshot);
-                    screenshotCounter++;
-                    screenshotCountEl.textContent = '📸 ' + screenshotCounter;
-
-                    // Show in modal
-                    showScreenshot(screenshot);
-
-                    debugEl.textContent = '📸 Screenshot captured at ' + new Date().toLocaleTimeString();
-
-                } catch (e) {
-                    console.error('Screenshot error:', e);
-                    debugEl.textContent = '❌ Screenshot failed: ' + e.message;
-                }
-            }
-
-            // --- Show Screenshot in Modal ---
-            function showScreenshot(screenshot) {
-                screenshotImage.src = screenshot.image;
-                screenshotPlay.textContent = `${screenshot.play.type.toUpperCase()} — ${screenshot.play.direction.toUpperCase()} @ $${screenshot.play.price.toFixed(2)}`;
-
-                if (screenshot.divergence) {
-                    const pattern = screenshot.divergence.pattern;
-                    const isBullish = screenshot.divergence.type === 'bullish';
-                    screenshotPattern.innerHTML = `
-                        ${isBullish ? '🖐️ <span style="color:#22c55e;">RIGHT HAND (Bullish)</span>' : '🖐️ <span style="color:#ef4444;">LEFT HAND (Bearish)</span>'}
-                        <span style="color:#64748b;font-size:10px;margin-left:8px;">
-                            Price: $${screenshot.divergence.price1.toFixed(2)} → $${screenshot.divergence.price2.toFixed(2)} |
-                            RSI: ${screenshot.divergence.rsi1.toFixed(0)} → ${screenshot.divergence.rsi2.toFixed(0)}
-                        </span>
-                    `;
-                    screenshotSignal.innerHTML = isBullish ?
-                        '🟢 <span style="color:#22c55e;">BUY Signal — Bullish Divergence Confirmed</span>' :
-                        '🔴 <span style="color:#ef4444;">SELL Signal — Bearish Divergence Confirmed</span>';
-                } else {
-                    screenshotPattern.textContent = '⚠️ No divergence detected (Convergence)';
-                    screenshotSignal.textContent = '📊 Trend following — No divergence signal';
-                }
-
-                screenshotDetails.textContent = screenshot.play.reason;
-
-                modal.classList.add('active');
             }
 
             // --- Update key levels display ---
@@ -1088,7 +1176,8 @@
                     const change = prevResistance ? ((resistance - prevResistance) / prevResistance * 100) : 0;
                     const arrow = change > 0 ? '↑' : change < 0 ? '↓' : '→';
                     const color = change > 0 ? 'up' : change < 0 ? 'down' : '';
-                    resistanceDisplay.innerHTML = `$${resistance.toFixed(2)} <span class="change ${color}">${arrow} ${Math.abs(change).toFixed(2)}%</span>`;
+                    resistanceDisplay.innerHTML =
+                        `$${resistance.toFixed(2)} <span class="change ${color}">${arrow} ${Math.abs(change).toFixed(1)}%</span>`;
                     prevResistance = resistance;
                 } else {
                     resistanceDisplay.textContent = '--';
@@ -1098,7 +1187,8 @@
                     const change = prevSupport ? ((support - prevSupport) / prevSupport * 100) : 0;
                     const arrow = change > 0 ? '↑' : change < 0 ? '↓' : '→';
                     const color = change > 0 ? 'up' : change < 0 ? 'down' : '';
-                    supportDisplay.innerHTML = `$${support.toFixed(2)} <span class="change ${color}">${arrow} ${Math.abs(change).toFixed(2)}%</span>`;
+                    supportDisplay.innerHTML =
+                        `$${support.toFixed(2)} <span class="change ${color}">${arrow} ${Math.abs(change).toFixed(1)}%</span>`;
                     prevSupport = support;
                 } else {
                     supportDisplay.textContent = '--';
@@ -1109,7 +1199,8 @@
                     const change = prevEma ? ((ema - prevEma) / prevEma * 100) : 0;
                     const arrow = change > 0 ? '↑' : change < 0 ? '↓' : '→';
                     const color = change > 0 ? 'up' : change < 0 ? 'down' : '';
-                    emaDisplay.innerHTML = `$${ema.toFixed(2)} <span class="change ${color}">${arrow} ${Math.abs(change).toFixed(2)}%</span>`;
+                    emaDisplay.innerHTML =
+                        `$${ema.toFixed(2)} <span class="change ${color}">${arrow} ${Math.abs(change).toFixed(1)}%</span>`;
                     prevEma = ema;
                 } else {
                     emaDisplay.textContent = '--';
@@ -1120,7 +1211,8 @@
                     const change = prevAlma ? ((alma - prevAlma) / prevAlma * 100) : 0;
                     const arrow = change > 0 ? '↑' : change < 0 ? '↓' : '→';
                     const color = change > 0 ? 'up' : change < 0 ? 'down' : '';
-                    almaDisplay.innerHTML = `$${alma.toFixed(2)} <span class="change ${color}">${arrow} ${Math.abs(change).toFixed(2)}%</span>`;
+                    almaDisplay.innerHTML =
+                        `$${alma.toFixed(2)} <span class="change ${color}">${arrow} ${Math.abs(change).toFixed(1)}%</span>`;
                     prevAlma = alma;
                 } else {
                     almaDisplay.textContent = '--';
@@ -1144,7 +1236,7 @@
                     rsiDisplay.innerHTML = `
                         ${lastRsi.toFixed(1)}
                         <span class="rsi-status ${status}">${statusText2}</span>
-                        <span class="change ${color}">${arrow} ${Math.abs(change).toFixed(2)}%</span>
+                        <span class="change ${color}">${arrow} ${Math.abs(change).toFixed(1)}%</span>
                     `;
 
                     rsiDot.className = `rsi-dot ${dotColor}`;
@@ -1160,6 +1252,18 @@
                     rsiDot.className = 'rsi-dot neutral';
                     rsiStatusText.textContent = 'RSI: -- (Neutral)';
                     rsiStatusText.style.color = '#fbbf24';
+                }
+
+                // Fibonacci displays
+                if (fib618) {
+                    fib618Display.textContent = '$' + fib618.toFixed(2);
+                } else {
+                    fib618Display.textContent = '--';
+                }
+                if (fib1618) {
+                    fib1618Display.textContent = '$' + fib1618.toFixed(2);
+                } else {
+                    fib1618Display.textContent = '--';
                 }
             }
 
@@ -1180,6 +1284,8 @@
                                 <span class="play-price">@ $${p.price.toFixed(2)}</span>
                                 <span class="play-time">${p.time || 'just now'}</span>
                                 ${p.screenshot ? ' 📸' : ''}
+                                ${p.fibHit ? ' <span class="fib-hit">🩷 Fib Hit</span>' : ''}
+                                ${p.fibTarget ? ' <span class="fib-target">🧡 Target</span>' : ''}
                             </div>
                             <div class="play-detail">${p.reason}</div>
                         </div>
@@ -1196,6 +1302,7 @@
                                 <span class="play-price">@ $${p.price.toFixed(2)}</span>
                                 <span class="play-time">${p.time || 'just now'}</span>
                                 ${p.screenshot ? ' 📸' : ''}
+                                ${p.fibHit ? ' <span class="fib-hit">🩷 Fib Hit</span>' : ''}
                             </div>
                             <div class="play-detail">${p.reason}</div>
                         </div>
@@ -1212,6 +1319,7 @@
                                 <span class="play-price">@ $${p.price.toFixed(2)}</span>
                                 <span class="play-time">${p.time || 'just now'}</span>
                                 ${p.screenshot ? ' 📸' : ''}
+                                ${p.fibHit ? ' <span class="fib-hit">🩷 Fib Hit</span>' : ''}
                             </div>
                             <div class="play-detail">${p.reason}</div>
                         </div>
@@ -1237,11 +1345,86 @@
                 }
             }
 
-            // --- Draw chart with candlesticks ---
+            // --- Take Screenshot ---
+            function takeScreenshot(playData, divergenceData) {
+                try {
+                    const dataUrl = canvas.toDataURL('image/png');
+
+                    const screenshot = {
+                        image: dataUrl,
+                        timestamp: new Date().toLocaleString(),
+                        play: {
+                            type: playData.type,
+                            direction: playData.direction,
+                            price: playData.price,
+                            rsi: playData.rsi || '--',
+                            level: playData.level || '--',
+                            ema: playData.ema || '--',
+                            alma: playData.alma || '--',
+                            reason: playData.reason || '--',
+                            fibHit: playData.fibHit || false,
+                            fib618: playData.fib618 || '--',
+                            fib1618: playData.fib1618 || '--'
+                        },
+                        divergence: divergenceData ? {
+                            type: divergenceData.type,
+                            pattern: divergenceData.type === 'bullish' ? 'Right Hand (Bullish)' : 'Left Hand (Bearish)',
+                            price1: divergenceData.price1,
+                            price2: divergenceData.price2,
+                            rsi1: divergenceData.rsi1,
+                            rsi2: divergenceData.rsi2
+                        } : null
+                    };
+
+                    screenshots.push(screenshot);
+                    screenshotCounter++;
+                    screenshotCountEl.textContent = '📸 ' + screenshotCounter;
+                    showScreenshot(screenshot);
+                    debugEl.textContent = '📸 Screenshot captured at ' + new Date().toLocaleTimeString();
+
+                } catch (e) {
+                    console.error('Screenshot error:', e);
+                    debugEl.textContent = '❌ Screenshot failed: ' + e.message;
+                }
+            }
+
+            // --- Show Screenshot in Modal ---
+            function showScreenshot(screenshot) {
+                screenshotImage.src = screenshot.image;
+                const p = screenshot.play;
+                screenshotPlay.textContent =
+                    `${p.type.toUpperCase()} — ${p.direction.toUpperCase()} @ $${p.price.toFixed(2)}`;
+
+                if (screenshot.divergence) {
+                    const isBullish = screenshot.divergence.type === 'bullish';
+                    screenshotPattern.innerHTML = `
+                        ${isBullish ? '🖐️ <span style="color:#22c55e;">RIGHT HAND (Bullish)</span>' : '🖐️ <span style="color:#ef4444;">LEFT HAND (Bearish)</span>'}
+                        <span style="color:#64748b;font-size:10px;margin-left:6px;">
+                            Price: $${screenshot.divergence.price1.toFixed(2)} → $${screenshot.divergence.price2.toFixed(2)} |
+                            RSI: ${screenshot.divergence.rsi1.toFixed(0)} → ${screenshot.divergence.rsi2.toFixed(0)}
+                        </span>
+                    `;
+                    screenshotSignal.innerHTML = isBullish ?
+                        '🟢 <span style="color:#22c55e;">BUY Signal — Bullish Divergence Confirmed</span>' :
+                        '🔴 <span style="color:#ef4444;">SELL Signal — Bearish Divergence Confirmed</span>';
+                } else {
+                    screenshotPattern.textContent = '⚠️ No divergence detected (Convergence)';
+                    screenshotSignal.textContent = '📊 Trend following — No divergence signal';
+                }
+
+                screenshotFib618.textContent = p.fib618 !== '--' ? `$${p.fib618.toFixed(2)} ${p.fibHit ? '✅ Hit!' : ''}` :
+                '--';
+                screenshotFib1618.textContent = p.fib1618 !== '--' ? `$${p.fib1618.toFixed(2)}` : '--';
+                screenshotDetails.textContent = p.reason;
+
+                modal.classList.add('active');
+            }
+
+            // --- Draw chart with Fibonacci ---
             function drawChart() {
                 const rect = canvas.parentElement.getBoundingClientRect();
                 const W = canvas.parentElement.clientWidth || 800;
-                const H = canvas.parentElement.clientHeight || 350;
+                const H = canvas.parentElement.clientHeight || 380;
 
                 canvas.width = W;
                 canvas.height = H;
@@ -1316,6 +1499,54 @@
                 ctx.fillStyle = '#22c55e66';
                 ctx.fillText('RSI 30', pad.left + 2, rsi30Y - 4);
 
+                // --- Fibonacci Levels ---
+                if (showFib && fib618 && fib1618) {
+                    const fib618Y = getPriceY(fib618);
+                    const fib1618Y = getPriceY(fib1618);
+                    const fibLowY = fibLow ? getPriceY(fibLow) : null;
+                    const fibHighY = fibHigh ? getPriceY(fibHigh) : null;
+
+                    // Draw 0.618 (Entry Zone) - Pink
+                    ctx.strokeStyle = '#f472b688';
+                    ctx.lineWidth = 1.5;
+                    ctx.setLineDash([6, 4]);
+                    ctx.beginPath();
+                    ctx.moveTo(pad.left, fib618Y);
+                    ctx.lineTo(W - pad.right, fib618Y);
+                    ctx.stroke();
+                    ctx.fillStyle = '#f472b688';
+                    ctx.font = '8px Segoe UI, sans-serif';
+                    ctx.setLineDash([]);
+                    ctx.fillText('🩷 0.618 $' + fib618.toFixed(2), W - pad.right - 90, fib618Y - 4);
+
+                    // Draw 1.618 (Target) - Orange
+                    ctx.strokeStyle = '#fb923c88';
+                    ctx.lineWidth = 1.5;
+                    ctx.setLineDash([6, 4]);
+                    ctx.beginPath();
+                    ctx.moveTo(pad.left, fib1618Y);
+                    ctx.lineTo(W - pad.right, fib1618Y);
+                    ctx.stroke();
+                    ctx.fillStyle = '#fb923c88';
+                    ctx.fillText('🧡 1.618 $' + fib1618.toFixed(2), W - pad.right - 90, fib1618Y - 4);
+
+                    // Draw Fibonacci Zone (between low and high)
+                    if (fibLowY && fibHighY) {
+                        ctx.strokeStyle = '#f472b622';
+                        ctx.lineWidth = 1;
+                        ctx.setLineDash([2, 4]);
+                        ctx.beginPath();
+                        ctx.moveTo(pad.left, fibLowY);
+                        ctx.lineTo(W - pad.right, fibLowY);
+                        ctx.stroke();
+                        ctx.fillStyle = '#f472b622';
+                        ctx.fillText('↙ Fib Low $' + fibLow.toFixed(2), pad.left + 2, fibLowY + 12);
+                        ctx.fillStyle = '#fb923c22';
+                        ctx.fillText('↗ Fib High $' + fibHigh.toFixed(2), pad.left + 2, fibHighY - 4);
+                    }
+                    ctx.setLineDash([]);
+                }
+
                 // Support/Resistance
                 if (showLevels && resistance && support) {
                     const resY = getPriceY(resistance);
@@ -1329,9 +1560,9 @@
                     ctx.lineTo(W - pad.right, resY);
                     ctx.stroke();
                     ctx.fillStyle = '#ef444466';
-                    ctx.font = '9px Segoe UI, sans-serif';
+                    ctx.font = '8px Segoe UI, sans-serif';
                     ctx.setLineDash([]);
-                    ctx.fillText('🔴 Resistance $' + resistance.toFixed(2), W - pad.right - 110, resY - 6);
+                    ctx.fillText('🔴 R $' + resistance.toFixed(2), W - pad.right - 80, resY - 4);
 
                     ctx.strokeStyle = '#22c55e66';
                     ctx.beginPath();
@@ -1339,7 +1570,7 @@
                     ctx.lineTo(W - pad.right, supY);
                     ctx.stroke();
                     ctx.fillStyle = '#22c55e66';
-                    ctx.fillText('🟢 Support $' + support.toFixed(2), W - pad.right - 100, supY - 6);
+                    ctx.fillText('🟢 S $' + support.toFixed(2), W - pad.right - 80, supY - 4);
                     ctx.setLineDash([]);
                 }
 
@@ -1442,7 +1673,7 @@
                     const y2 = getPriceY(div.price2);
 
                     const color = div.type === 'bullish' ? '#22c55e' : '#ef4444';
-                    const label = div.type === 'bullish' ? '⬆️ RH' : '⬇️ LH';
+                    const label = div.type === 'bullish' ? 'RH' : 'LH';
 
                     ctx.strokeStyle = color;
                     ctx.lineWidth = 2;
@@ -1455,9 +1686,9 @@
                     const midX = (x1 + x2) / 2;
                     const midY = (y1 + y2) / 2 - 14;
                     ctx.fillStyle = '#141d2b';
-                    ctx.fillRect(midX - 18, midY - 10, 36, 18);
+                    ctx.fillRect(midX - 14, midY - 8, 28, 16);
                     ctx.fillStyle = color;
-                    ctx.font = '10px Segoe UI, sans-serif';
+                    ctx.font = '8px Segoe UI, sans-serif';
                     ctx.setLineDash([]);
                     ctx.textAlign = 'center';
                     ctx.fillText(label, midX, midY + 4);
@@ -1476,16 +1707,16 @@
 
                     ctx.save();
                     ctx.fillStyle = color;
-                    ctx.font = 'bold 16px Segoe UI, sans-serif';
+                    ctx.font = 'bold 14px Segoe UI, sans-serif';
                     ctx.textAlign = 'center';
-                    ctx.fillText(isBuy ? '▲' : '▼', x, y - 20);
+                    ctx.fillText(isBuy ? '▲' : '▼', x, y - 18);
 
                     ctx.fillStyle = '#141d2bcc';
-                    const labelWidth = 30;
-                    ctx.fillRect(x - labelWidth / 2, y - 38, labelWidth, 16);
+                    const labelWidth = 26;
+                    ctx.fillRect(x - labelWidth / 2, y - 34, labelWidth, 14);
                     ctx.fillStyle = color;
-                    ctx.font = 'bold 8px Segoe UI, sans-serif';
-                    ctx.fillText(label, x, y - 26);
+                    ctx.font = 'bold 7px Segoe UI, sans-serif';
+                    ctx.fillText(label, x, y - 23);
 
                     ctx.strokeStyle = color + '44';
                     ctx.lineWidth = 1;
@@ -1505,7 +1736,7 @@
                 const lastX = getX(lastIdx);
                 const lastY = getPriceY(lastPrice);
                 ctx.fillStyle = '#fbbf24';
-                ctx.font = 'bold 11px Segoe UI, sans-serif';
+                ctx.font = 'bold 10px Segoe UI, sans-serif';
                 ctx.textAlign = 'left';
                 ctx.fillText('$' + lastPrice.toFixed(2), lastX + 4, lastY - 4);
 
@@ -1514,13 +1745,13 @@
                 if (lastRsi !== null && lastRsi !== undefined) {
                     const rsiY = getRsiY(lastRsi);
                     ctx.fillStyle = '#8b5cf6';
-                    ctx.font = '10px Segoe UI, sans-serif';
+                    ctx.font = '8px Segoe UI, sans-serif';
                     ctx.fillText('RSI: ' + lastRsi.toFixed(0), pad.left + 4, rsiY - 4);
                 }
 
                 // Y-axis labels
                 ctx.fillStyle = '#475569';
-                ctx.font = '8px Segoe UI, sans-serif';
+                ctx.font = '7px Segoe UI, sans-serif';
                 ctx.textAlign = 'right';
                 for (let i = 0; i <= 4; i++) {
                     const price = minPrice + (i / 4) * priceRange;
@@ -1543,7 +1774,7 @@
                 updateKeyLevelsDisplay();
             }
 
-            // --- Update data ---
+            // --- Update data with win rate tracking ---
             function updateData() {
                 const len = prices.length;
                 if (len < 5) return;
@@ -1553,39 +1784,70 @@
                 almaVals = calculateALMA(prices, 9, 6, 0.85);
 
                 const newPlays = detectPlays(prices, rsiVals, emaVals, almaVals);
-
-                // Check for divergences to include in screenshot
                 const divergences = detectDivergences(prices, rsiVals);
 
+                // Track wins/losses for each play
                 newPlays.forEach(p => {
-                    const signalType = p.direction === 'long' ? 'buy' : 'sell';
-                    signals.push({ idx: prices.length - 1, type: signalType, play: p });
-                    if (signals.length > 30) signals.shift();
+                    // Determine if this play would be a winner (simplified)
+                    // If price reaches 1.618 target within next 10 bars, it's a win
+                    let isWin = false;
+                    let targetReached = false;
+                    const startIdx = prices.length - 1;
 
-                    const logEntry = { ...p, time: new Date().toLocaleTimeString() };
-
-                    // Find matching divergence for this play
-                    let matchingDivergence = null;
-                    if (p.type === 'bounce' && p.divData) {
-                        matchingDivergence = p.divData;
-                    } else {
-                        // Check if there's a divergence near this play
-                        const lastDiv = divergences[divergences.length - 1];
-                        if (lastDiv && Math.abs(lastDiv.idx2 - prices.length + 1) < 3) {
-                            matchingDivergence = lastDiv;
+                    // Check if there's enough data to determine outcome
+                    if (prices.length > startIdx + 1) {
+                        // Simulate: check if price reaches 1.618 within next 10 bars
+                        const fibTarget = p.fib1618;
+                        if (fibTarget) {
+                            for (let i = startIdx + 1; i < Math.min(prices.length, startIdx + 11); i++) {
+                                if (p.direction === 'long' && prices[i] >= fibTarget) {
+                                    targetReached = true;
+                                    break;
+                                } else if (p.direction === 'short' && prices[i] <= fibTarget) {
+                                    targetReached = true;
+                                    break;
+                                }
+                            }
                         }
+                        // If target reached, it's a win
+                        isWin = targetReached;
                     }
 
-                    // Take screenshot with play and divergence info
-                    takeScreenshot(p, matchingDivergence);
+                    // Track trade result
+                    if (prices.length > 5) {
+                        totalTrades++;
+                        if (isWin) wins++;
+                    }
 
-                    // Mark log entry with screenshot
-                    logEntry.screenshot = true;
+                    // Record the trade result for win rate calculation
+                    const fibHit = p.fibHit || false;
+                    tradeResults.push({
+                        win: isWin,
+                        playType: p.type,
+                        direction: p.direction,
+                        fibHit: fibHit,
+                        fib618: p.fib618,
+                        fib1618: p.fib1618
+                    });
+                    if (tradeResults.length > 100) tradeResults.shift();
+
+                    // Add to play logs with win/loss info
+                    const logEntry = {
+                        ...p,
+                        time: new Date().toLocaleTimeString(),
+                        isWin: isWin,
+                        fibHit: fibHit,
+                        screenshot: true
+                    };
 
                     if (p.type === 'tabo') { playLogs.tabo.push(logEntry);
                         taboPlays++; } else if (p.type === 'momentum') { playLogs.momentum.push(logEntry);
                         momentumPlays++; } else if (p.type === 'bounce') { playLogs.bounce.push(logEntry);
                         bouncePlays++; }
+
+                    // Take screenshot with play and divergence info
+                    const matchingDivergence = divergences.length > 0 ? divergences[divergences.length - 1] : null;
+                    takeScreenshot(p, matchingDivergence);
                 });
 
                 divergencePlays = divergences.length;
@@ -1610,14 +1872,23 @@
                     }
                 }
 
+                // Update win rate display
+                const winRate = totalTrades > 0 ? Math.round((wins / totalTrades) * 100) : 0;
+                winRateDisplay.textContent = '🏆 ' + winRate + '%';
+                winRateStat.textContent = winRate + '%';
+                totalPlaysStat.textContent = totalTrades;
+                winsStat.textContent = wins;
+
                 playCount.textContent = (taboPlays + momentumPlays + bouncePlays) + ' plays';
                 updatePlayLogs();
 
+                // Update current play display
                 if (newPlays.length > 0) {
                     const latest = newPlays[newPlays.length - 1];
                     const emoji = latest.direction === 'long' ? '🟢' : '🔴';
                     const label = latest.type.toUpperCase();
-                    currentPlay.textContent = `${emoji} ${label} ${latest.direction.toUpperCase()} @ $${latest.price.toFixed(2)}`;
+                    currentPlay.textContent =
+                        `${emoji} ${label} ${latest.direction.toUpperCase()} @ $${latest.price.toFixed(2)}`;
                     currentPlay.style.color = latest.direction === 'long' ? '#22c55e' : '#ef4444';
 
                     signalBadge.textContent = `${emoji} ${label}`;
@@ -1629,26 +1900,32 @@
                         `Pullback to EMA $${latest.ema.toFixed(2)} / ALMA $${latest.alma.toFixed(2)}`;
                     else if (latest.type === 'bounce') detail = `Bounce off $${latest.level.toFixed(2)} with divergence`;
 
+                    const fibText = latest.fibHit ? ' 🩷 Fib 0.618 Hit!' : '';
+
                     playDisplay.innerHTML = `
                         <div class="pattern-box ${latest.direction === 'long' ? 'bullish' : 'bearish'}">
                             <div class="label">${emoji} ${latest.type.toUpperCase()} — ${latest.direction.toUpperCase()}</div>
-                            <div style="font-size:11px;color:#94a3b8;margin-top:2px;">
+                            <div style="font-size:10px;color:#94a3b8;margin-top:2px;">
                                 Entry: $${latest.price.toFixed(2)} · ${detail}
                             </div>
-                            <div style="font-size:10px;color:#64748b;margin-top:4px;">
+                            <div style="font-size:9px;color:#64748b;margin-top:3px;">
                                 ⚡ Confidence: ${latest.type === 'tabo' ? 'High' : latest.type === 'momentum' ? 'Medium' : 'High'}
+                                ${fibText}
                             </div>
-                            <div style="font-size:10px;color:#22c55e;margin-top:4px;border-top:1px solid #1a2332;padding-top:4px;">
+                            <div style="font-size:9px;color:#22c55e;margin-top:3px;border-top:1px solid #1a2332;padding-top:3px;">
                                 📝 ${latest.reason}
-                            </div>
-                            <div style="font-size:10px;color:#8b5cf6;margin-top:4px;">
-                                📸 Screenshot captured!
                             </div>
                         </div>
                     `;
 
                     plays.push({ ...latest, timestamp: new Date() });
                     if (plays.length > 50) plays.shift();
+
+                    // Add signals for chart
+                    const signalType = latest.direction === 'long' ? 'buy' : 'sell';
+                    signals.push({ idx: prices.length - 1, type: signalType, play: latest });
+                    if (signals.length > 30) signals.shift();
+
                 } else {
                     currentPlay.textContent = '⏳ No play detected';
                     currentPlay.style.color = '#fbbf24';
@@ -1657,7 +1934,7 @@
                     playDisplay.innerHTML = `
                         <div class="pattern-box neutral">
                             <div class="label">⏳ Monitoring for setups...</div>
-                            <div style="font-size:11px;color:#94a3b8;margin-top:4px;">
+                            <div style="font-size:10px;color:#94a3b8;margin-top:2px;">
                                 Watch for TABO breakouts, Momentum pullbacks, and Bounce plays
                             </div>
                         </div>
@@ -1705,7 +1982,7 @@
             function startSimulation() {
                 if (intervalId) return;
                 isRunning = true;
-                const delay = Math.max(100, 600 / speedFactor);
+                const delay = Math.max(80, 500 / speedFactor);
                 intervalId = setInterval(function() {
                     if (isRunning) {
                         addBar();
@@ -1751,13 +2028,20 @@
                 signals = [];
                 playLogs = { tabo: [], momentum: [], bounce: [], divergence: [] };
                 screenshots = [];
+                tradeResults = [];
                 taboPlays = 0;
                 momentumPlays = 0;
                 bouncePlays = 0;
                 divergencePlays = 0;
                 barCounter = 0;
                 screenshotCounter = 0;
+                totalTrades = 0;
+                wins = 0;
                 screenshotCountEl.textContent = '📸 0';
+                winRateDisplay.textContent = '🏆 0%';
+                winRateStat.textContent = '0%';
+                totalPlaysStat.textContent = '0';
+                winsStat.textContent = '0';
                 prevResistance = 0;
                 prevSupport = 0;
                 prevEma = 0;
@@ -1810,6 +2094,13 @@
                 drawChart();
             }
 
+            function toggleFib() {
+                showFib = !showFib;
+                btnFib.textContent = showFib ? 'Fib: ON' : 'Fib: OFF';
+                btnFib.className = showFib ? 'fib-btn active' : 'fib-btn';
+                drawChart();
+            }
+
             function manualScreenshot() {
                 const lastPlay = plays[plays.length - 1];
                 if (lastPlay) {
@@ -1817,14 +2108,13 @@
                     const lastDiv = divergences[divergences.length - 1];
                     takeScreenshot(lastPlay, lastDiv);
                 } else {
-                    // Take screenshot of current state with no play
                     try {
                         const dataUrl = canvas.toDataURL('image/png');
                         const screenshot = {
                             image: dataUrl,
                             timestamp: new Date().toLocaleString(),
                             play: { type: 'Manual', direction: '--', price: prices[prices.length - 1] || 0,
-                                reason: 'Manual screenshot' },
+                                reason: 'Manual screenshot', fib618: fib618, fib1618: fib1618, fibHit: false },
                             divergence: null
                         };
                         screenshots.push(screenshot);
@@ -1867,6 +2157,7 @@
                 btnReset.addEventListener('click', resetSimulation);
                 btnSpeed.addEventListener('click', cycleSpeed);
                 btnLevels.addEventListener('click', toggleLevels);
+                btnFib.addEventListener('click', toggleFib);
                 btnStep.addEventListener('click', stepBar);
                 btnScreenshot.addEventListener('click', manualScreenshot);
 
@@ -1904,7 +2195,7 @@
                     });
                 });
 
-                console.log('✅ GMMG Strategy Visualizer with Screenshots initialized!');
+                console.log('✅ GMMG Strategy Visualizer with Fibonacci + Screenshots initialized!');
                 console.log('📊 Bars:', prices.length);
             }
 
