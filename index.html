@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GMMG Strategy Visualizer - STANDALONE</title>
+    <title>GMMG Strategy Visualizer - Candlesticks + Buy/Sell Signals</title>
     <style>
         * {
             margin: 0;
@@ -72,10 +72,11 @@
             margin-bottom: 8px;
             display: flex;
             justify-content: space-between;
+            align-items: center;
         }
         .chart-container {
             position: relative;
-            height: 320px;
+            height: 350px;
             background: #0f1729;
             border-radius: 8px;
             overflow: hidden;
@@ -279,6 +280,74 @@
             font-size: 12px;
             color: #94a3b8;
         }
+        .legend-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding: 6px 0;
+            font-size: 10px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .legend-color {
+            width: 16px;
+            height: 3px;
+            border-radius: 2px;
+        }
+        .legend-color.candle-green {
+            background: #22c55e;
+        }
+        .legend-color.candle-red {
+            background: #ef4444;
+        }
+        .legend-color.ema {
+            background: #fbbf24;
+            border-top: 2px dashed #fbbf24;
+            height: 0;
+        }
+        .legend-color.alma {
+            background: #06b6d4;
+            border-top: 2px dashed #06b6d4;
+            height: 0;
+        }
+        .legend-color.rsi {
+            background: #8b5cf6;
+        }
+        .legend-color.rsi70 {
+            background: #ef444444;
+            border-top: 1px dashed #ef4444;
+            height: 0;
+        }
+        .legend-color.rsi30 {
+            background: #22c55e44;
+            border-top: 1px dashed #22c55e;
+            height: 0;
+        }
+        .legend-color.support {
+            background: #22c55e66;
+            border-top: 1px dashed #22c55e;
+            height: 0;
+        }
+        .legend-color.resistance {
+            background: #ef444466;
+            border-top: 1px dashed #ef4444;
+            height: 0;
+        }
+        .legend-color.buy-signal {
+            background: #22c55e;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        .legend-color.sell-signal {
+            background: #ef4444;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
         @media (max-width: 1024px) {
             .grid-2 {
                 grid-template-columns: 1fr;
@@ -290,6 +359,10 @@
         @media (max-width: 600px) {
             .grid-3 {
                 grid-template-columns: 1fr;
+            }
+            .legend-container {
+                font-size: 8px;
+                gap: 6px;
             }
         }
     </style>
@@ -312,11 +385,25 @@
             <!-- MAIN CHART -->
             <div class="card">
                 <div class="card-header">
-                    <span>Price · RSI · Support/Resistance · Play Detection</span>
+                    <span>Price · RSI · Support/Resistance · Candlesticks</span>
                     <span id="currentPlay" style="color:#fbbf24;">No play detected</span>
                 </div>
                 <div class="chart-container">
                     <canvas id="mainChart"></canvas>
+                </div>
+                <!-- Legend -->
+                <div class="legend-container">
+                    <span class="legend-item"><span class="legend-color candle-green"></span> Bullish Candle</span>
+                    <span class="legend-item"><span class="legend-color candle-red"></span> Bearish Candle</span>
+                    <span class="legend-item"><span class="legend-color ema"></span> EMA (9)</span>
+                    <span class="legend-item"><span class="legend-color alma"></span> ALMA</span>
+                    <span class="legend-item"><span class="legend-color rsi"></span> RSI (14)</span>
+                    <span class="legend-item"><span class="legend-color rsi70"></span> RSI 70</span>
+                    <span class="legend-item"><span class="legend-color rsi30"></span> RSI 30</span>
+                    <span class="legend-item"><span class="legend-color support"></span> Support</span>
+                    <span class="legend-item"><span class="legend-color resistance"></span> Resistance</span>
+                    <span class="legend-item"><span class="legend-color buy-signal"></span> BUY Signal</span>
+                    <span class="legend-item"><span class="legend-color sell-signal"></span> SELL Signal</span>
                 </div>
                 <div class="controls">
                     <button id="btnStart" class="primary running">⏹ Running</button>
@@ -409,13 +496,14 @@
 
         <div class="footnote">
             ⚠️ Educational simulation — automatically detects GMMG-style plays on synthetic price data.
+            <span style="color:#22c55e;">🟢</span> = BUY Signal &nbsp;|&nbsp; <span style="color:#ef4444;">🔴</span> = SELL Signal
         </div>
     </div>
 
     <script>
         // ============================================================
-        //  GMMG STRATEGY VISUALIZER - PURE JS, NO EXTERNAL DEPENDENCIES
-        //  Uses Canvas API directly - no Chart.js needed
+        //  GMMG STRATEGY VISUALIZER - CANDLESTICKS + BUY/SELL SIGNALS
+        //  Full legend and play-based trading signals
         // ============================================================
 
         // --- DOM refs ---
@@ -450,10 +538,15 @@
 
         // --- State ---
         let prices = [];
+        let highs = [];
+        let lows = [];
+        let opens = [];
+        let closes = [];
         let rsiVals = [];
         let emaVals = [];
         let almaVals = [];
         let plays = [];
+        let signals = []; // {idx, type: 'buy'|'sell', play: {...}}
 
         let isRunning = true;
         let intervalId = null;
@@ -469,17 +562,38 @@
         let resistance = 0,
             support = 0;
 
-        // --- Generate price ---
-        function generatePrice(prev) {
-            if (prev === undefined || prev === null) return 100 + Math.random() * 6;
+        // --- Generate OHLC data ---
+        function generateOHLC(prevClose) {
+            if (prevClose === undefined || prevClose === null) {
+                const base = 100 + Math.random() * 6;
+                return {
+                    open: base,
+                    high: base + Math.random() * 0.8,
+                    low: base - Math.random() * 0.8,
+                    close: base + (Math.random() - 0.5) * 0.6
+                };
+            }
+
             const trend = Math.sin(barCounter / 45) * 0.15 + Math.sin(barCounter / 22) * 0.06;
             const noise = (Math.random() - 0.5) * 0.6;
-            const meanRevert = (100 - prev) * 0.003;
-            let newPrice = prev + trend + noise + meanRevert;
-            if (Math.random() < 0.02) newPrice += (Math.random() - 0.5) * 1.8;
-            if (Math.random() < 0.01) newPrice += (Math.random() - 0.5) * 3.0;
-            newPrice = Math.max(82, Math.min(118, newPrice));
-            return newPrice;
+            const meanRevert = (100 - prevClose) * 0.003;
+
+            let close = prevClose + trend + noise + meanRevert;
+            if (Math.random() < 0.02) close += (Math.random() - 0.5) * 1.8;
+            if (Math.random() < 0.01) close += (Math.random() - 0.5) * 3.0;
+            close = Math.max(82, Math.min(118, close));
+
+            const range = Math.random() * 0.6 + 0.2;
+            const open = close + (Math.random() - 0.5) * range * 0.5;
+            const high = Math.max(open, close) + Math.random() * range * 0.6;
+            const low = Math.min(open, close) - Math.random() * range * 0.6;
+
+            return {
+                open: Math.max(82, Math.min(118, open)),
+                high: Math.max(82, Math.min(118, high)),
+                low: Math.max(82, Math.min(118, low)),
+                close: Math.max(82, Math.min(118, close))
+            };
         }
 
         // --- Calculate RSI ---
@@ -693,7 +807,7 @@
             return plays;
         }
 
-        // --- Draw chart manually ---
+        // --- Draw chart with candlesticks ---
         function drawChart() {
             const rect = canvas.parentElement.getBoundingClientRect();
             canvas.width = canvas.parentElement.clientWidth;
@@ -701,7 +815,7 @@
 
             const W = canvas.width;
             const H = canvas.height;
-            const pad = { top: 20, bottom: 20, left: 40, right: 20 };
+            const pad = { top: 20, bottom: 20, left: 45, right: 45 };
             const chartW = W - pad.left - pad.right;
             const chartH = H - pad.top - pad.bottom;
 
@@ -719,12 +833,11 @@
             // Find min/max
             const allPrices = [...prices];
             const allRsi = rsiVals.filter(v => v !== null);
-            const minPrice = Math.min(82, ...allPrices) - 2;
-            const maxPrice = Math.max(118, ...allPrices) + 2;
+            const minPrice = Math.max(80, Math.min(...allPrices) - 2);
+            const maxPrice = Math.min(120, Math.max(...allPrices) + 2);
             const minRsi = 0;
             const maxRsi = 100;
 
-            // Price scale
             const priceRange = maxPrice - minPrice || 1;
             const rsiRange = maxRsi - minRsi || 1;
 
@@ -739,9 +852,13 @@
                 ctx.stroke();
             }
 
-            // Draw RSI 70 and 30 lines
-            const rsi70Y = pad.top + chartH - ((70 - minRsi) / rsiRange) * chartH;
-            const rsi30Y = pad.top + chartH - ((30 - minRsi) / rsiRange) * chartH;
+            const getX = (i) => pad.left + (i / Math.max(len - 1, 1)) * chartW;
+            const getPriceY = (val) => pad.top + chartH - ((val - minPrice) / priceRange) * chartH;
+            const getRsiY = (val) => pad.top + chartH - ((val - minRsi) / rsiRange) * chartH;
+
+            // ---- Draw RSI 70 and 30 lines ----
+            const rsi70Y = getRsiY(70);
+            const rsi30Y = getRsiY(30);
 
             ctx.strokeStyle = '#ef444444';
             ctx.lineWidth = 1;
@@ -763,10 +880,10 @@
             ctx.fillStyle = '#22c55e66';
             ctx.fillText('RSI 30', pad.left + 2, rsi30Y - 4);
 
-            // Draw Support/Resistance
+            // ---- Draw Support/Resistance ----
             if (showLevels && resistance && support) {
-                const resY = pad.top + chartH - ((resistance - minPrice) / priceRange) * chartH;
-                const supY = pad.top + chartH - ((support - minPrice) / priceRange) * chartH;
+                const resY = getPriceY(resistance);
+                const supY = getPriceY(support);
 
                 ctx.strokeStyle = '#ef444466';
                 ctx.lineWidth = 1.5;
@@ -790,73 +907,107 @@
                 ctx.setLineDash([]);
             }
 
-            // Draw price line
-            const getPriceX = (i) => pad.left + (i / Math.max(len - 1, 1)) * chartW;
-            const getPriceY = (val) => pad.top + chartH - ((val - minPrice) / priceRange) * chartH;
-
-            ctx.strokeStyle = '#fbbf24';
-            ctx.lineWidth = 2;
-            ctx.setLineDash([]);
-            ctx.beginPath();
-            for (let i = 0; i < len; i++) {
-                const x = getPriceX(i);
-                const y = getPriceY(prices[i]);
-                if (i === 0) ctx.moveTo(x, y);
-                else ctx.lineTo(x, y);
-            }
-            ctx.stroke();
-
-            // Draw EMA
+            // ---- Draw EMA ----
             ctx.strokeStyle = '#fbbf2488';
             ctx.lineWidth = 1.5;
             ctx.setLineDash([4, 4]);
             ctx.beginPath();
+            let emaStarted = false;
             for (let i = 0; i < len; i++) {
                 if (emaVals[i] === null) continue;
-                const x = getPriceX(i);
+                const x = getX(i);
                 const y = getPriceY(emaVals[i]);
-                if (i === 0 || emaVals[i - 1] === null) ctx.moveTo(x, y);
-                else ctx.lineTo(x, y);
+                if (!emaStarted) { ctx.moveTo(x, y);
+                    emaStarted = true; } else ctx.lineTo(x, y);
             }
             ctx.stroke();
+            ctx.setLineDash([]);
 
-            // Draw ALMA
+            // ---- Draw ALMA ----
             ctx.strokeStyle = '#06b6d488';
             ctx.lineWidth = 1.5;
             ctx.setLineDash([4, 4]);
             ctx.beginPath();
+            let almaStarted = false;
             for (let i = 0; i < len; i++) {
                 if (almaVals[i] === null) continue;
-                const x = getPriceX(i);
+                const x = getX(i);
                 const y = getPriceY(almaVals[i]);
-                if (i === 0 || almaVals[i - 1] === null) ctx.moveTo(x, y);
-                else ctx.lineTo(x, y);
+                if (!almaStarted) { ctx.moveTo(x, y);
+                    almaStarted = true; } else ctx.lineTo(x, y);
             }
             ctx.stroke();
+            ctx.setLineDash([]);
 
-            // Draw RSI (on separate scale)
-            const getRsiY = (val) => pad.top + chartH - ((val - minRsi) / rsiRange) * chartH;
-
+            // ---- Draw RSI ----
             ctx.strokeStyle = '#8b5cf6';
             ctx.lineWidth = 1.5;
-            ctx.setLineDash([]);
             ctx.beginPath();
+            let rsiStarted = false;
             for (let i = 0; i < len; i++) {
                 if (rsiVals[i] === null) continue;
-                const x = getPriceX(i);
+                const x = getX(i);
                 const y = getRsiY(rsiVals[i]);
-                if (i === 0 || rsiVals[i - 1] === null) ctx.moveTo(x, y);
-                else ctx.lineTo(x, y);
+                if (!rsiStarted) { ctx.moveTo(x, y);
+                    rsiStarted = true; } else ctx.lineTo(x, y);
             }
             ctx.stroke();
 
-            // Draw divergences
+            // ---- Draw Candlesticks ----
+            const candleWidth = Math.min(6, chartW / len * 0.6);
+
+            for (let i = 0; i < len; i++) {
+                if (i >= opens.length) continue;
+
+                const x = getX(i);
+                const open = opens[i] || prices[i];
+                const high = highs[i] || prices[i];
+                const low = lows[i] || prices[i];
+                const close = closes[i] || prices[i];
+
+                const yOpen = getPriceY(open);
+                const yClose = getPriceY(close);
+                const yHigh = getPriceY(high);
+                const yLow = getPriceY(low);
+
+                const isBullish = close > open;
+                const color = isBullish ? '#22c55e' : '#ef4444';
+
+                // Wick
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(x, yHigh);
+                ctx.lineTo(x, yLow);
+                ctx.stroke();
+
+                // Body
+                const bodyTop = Math.min(yOpen, yClose);
+                const bodyBottom = Math.max(yOpen, yClose);
+                const bodyHeight = Math.max(1, bodyBottom - bodyTop);
+
+                if (isBullish) {
+                    ctx.fillStyle = color;
+                    ctx.fillRect(x - candleWidth / 2, bodyTop, candleWidth, bodyHeight);
+                    ctx.strokeStyle = color;
+                    ctx.lineWidth = 0.5;
+                    ctx.strokeRect(x - candleWidth / 2, bodyTop, candleWidth, bodyHeight);
+                } else {
+                    ctx.fillStyle = color;
+                    ctx.fillRect(x - candleWidth / 2, bodyTop, candleWidth, bodyHeight);
+                    ctx.strokeStyle = color;
+                    ctx.lineWidth = 0.5;
+                    ctx.strokeRect(x - candleWidth / 2, bodyTop, candleWidth, bodyHeight);
+                }
+            }
+
+            // ---- Draw Divergences ----
             const divergences = detectDivergences(prices, rsiVals);
             divergences.forEach(div => {
                 if (div.idx1 < 0 || div.idx2 < 0 || div.idx1 >= len || div.idx2 >= len) return;
 
-                const x1 = getPriceX(div.idx1);
-                const x2 = getPriceX(div.idx2);
+                const x1 = getX(div.idx1);
+                const x2 = getX(div.idx2);
                 const y1 = getPriceY(div.price1);
                 const y2 = getPriceY(div.price2);
 
@@ -883,43 +1034,56 @@
                 ctx.textAlign = 'left';
             });
 
-            // Draw play markers
-            const recentPlays = plays.slice(-5);
-            recentPlays.forEach(p => {
-                const idx = prices.indexOf(p.price);
-                if (idx < 0 || idx >= len) return;
+            // ---- Draw Buy/Sell Signals ----
+            signals.forEach(signal => {
+                if (signal.idx < 0 || signal.idx >= len) return;
+                const x = getX(signal.idx);
+                const y = getPriceY(prices[signal.idx]);
 
-                const x = getPriceX(idx);
-                const y = getPriceY(p.price);
+                const isBuy = signal.type === 'buy';
+                const color = isBuy ? '#22c55e' : '#ef4444';
+                const label = isBuy ? 'BUY' : 'SELL';
 
-                const color = p.direction === 'long' ? '#22c55e' : '#ef4444';
-                const symbol = p.direction === 'long' ? '▲' : '▼';
-
+                // Draw signal arrow
+                ctx.save();
                 ctx.fillStyle = color;
-                ctx.font = '14px Segoe UI, sans-serif';
+                ctx.font = 'bold 16px Segoe UI, sans-serif';
                 ctx.textAlign = 'center';
-                ctx.fillText(symbol, x, y - 10);
+                ctx.fillText(isBuy ? '▲' : '▼', x, y - 20);
 
+                // Background for label
                 ctx.fillStyle = '#141d2bcc';
-                const label = p.type.toUpperCase();
-                ctx.fillRect(x - 16, y - 28, 32, 14);
+                const labelWidth = 30;
+                ctx.fillRect(x - labelWidth / 2, y - 38, labelWidth, 16);
                 ctx.fillStyle = color;
-                ctx.font = '8px Segoe UI, sans-serif';
-                ctx.fillText(label, x, y - 18);
+                ctx.font = 'bold 8px Segoe UI, sans-serif';
+                ctx.fillText(label, x, y - 26);
+
+                // Draw vertical line at signal
+                ctx.strokeStyle = color + '44';
+                ctx.lineWidth = 1;
+                ctx.setLineDash([2, 4]);
+                ctx.beginPath();
+                ctx.moveTo(x, getPriceY(maxPrice));
+                ctx.lineTo(x, getPriceY(minPrice));
+                ctx.stroke();
+
+                ctx.restore();
                 ctx.textAlign = 'left';
             });
 
-            // Draw current price label
-            const lastPrice = prices[len - 1];
-            const lastX = getPriceX(len - 1);
+            // ---- Current price label ----
+            const lastIdx = len - 1;
+            const lastPrice = prices[lastIdx];
+            const lastX = getX(lastIdx);
             const lastY = getPriceY(lastPrice);
             ctx.fillStyle = '#fbbf24';
             ctx.font = 'bold 11px Segoe UI, sans-serif';
             ctx.textAlign = 'left';
             ctx.fillText('$' + lastPrice.toFixed(2), lastX + 4, lastY - 4);
 
-            // Draw RSI label
-            const lastRsi = rsiVals[len - 1];
+            // ---- RSI label ----
+            const lastRsi = rsiVals[lastIdx];
             if (lastRsi !== null) {
                 const rsiY = getRsiY(lastRsi);
                 ctx.fillStyle = '#8b5cf6';
@@ -927,7 +1091,26 @@
                 ctx.fillText('RSI: ' + lastRsi.toFixed(0), pad.left + 4, rsiY - 4);
             }
 
-            // Update debug
+            // ---- Y-axis labels ----
+            ctx.fillStyle = '#475569';
+            ctx.font = '8px Segoe UI, sans-serif';
+            ctx.textAlign = 'right';
+            for (let i = 0; i <= 4; i++) {
+                const price = minPrice + (i / 4) * priceRange;
+                const y = getPriceY(price);
+                ctx.fillText('$' + price.toFixed(0), pad.left - 4, y + 3);
+            }
+
+            // ---- RSI Y-axis labels ----
+            ctx.textAlign = 'left';
+            ctx.fillStyle = '#475569';
+            for (let i = 0; i <= 4; i++) {
+                const rsiVal = minRsi + (i / 4) * rsiRange;
+                const y = getRsiY(rsiVal);
+                ctx.fillText(rsiVal.toFixed(0), W - pad.right + 4, y + 3);
+            }
+
+            // ---- Update debug ----
             debugEl.textContent = '✅ Running | Bars: ' + len + ' | Price: $' + lastPrice.toFixed(2) + ' | RSI: ' + (lastRsi !==
                 null ? lastRsi.toFixed(0) : '--');
         }
@@ -942,6 +1125,16 @@
             almaVals = calculateALMA(prices, 9, 6, 0.85);
 
             const newPlays = detectPlays(prices, rsiVals, emaVals, almaVals);
+
+            // Add signals for new plays
+            newPlays.forEach(p => {
+                if (p.direction === 'long') {
+                    signals.push({ idx: prices.length - 1, type: 'buy', play: p });
+                } else {
+                    signals.push({ idx: prices.length - 1, type: 'sell', play: p });
+                }
+                if (signals.length > 30) signals.shift();
+            });
 
             newPlays.forEach(p => {
                 if (p.type === 'tabo') taboPlays++;
@@ -1025,10 +1218,22 @@
         // --- Add bar ---
         function addBar() {
             barCounter++;
-            const last = prices.length > 0 ? prices[prices.length - 1] : 100;
-            const newPrice = generatePrice(last);
-            prices.push(newPrice);
-            if (prices.length > MAX_BARS) prices.shift();
+            const lastClose = closes.length > 0 ? closes[closes.length - 1] : 100;
+            const ohlc = generateOHLC(lastClose);
+
+            opens.push(ohlc.open);
+            highs.push(ohlc.high);
+            lows.push(ohlc.low);
+            closes.push(ohlc.close);
+            prices.push(ohlc.close);
+
+            if (prices.length > MAX_BARS) {
+                prices.shift();
+                opens.shift();
+                highs.shift();
+                lows.shift();
+                closes.shift();
+            }
             updateData();
         }
 
@@ -1077,10 +1282,15 @@
         function resetSimulation() {
             pauseSimulation();
             prices = [];
+            opens = [];
+            highs = [];
+            lows = [];
+            closes = [];
             rsiVals = [];
             emaVals = [];
             almaVals = [];
             plays = [];
+            signals = [];
             taboPlays = 0;
             momentumPlays = 0;
             bouncePlays = 0;
@@ -1088,8 +1298,12 @@
             barCounter = 0;
 
             for (let i = 0; i < 35; i++) {
-                const p = i === 0 ? 100 + Math.random() * 4 : generatePrice(prices[prices.length - 1]);
-                prices.push(p);
+                const ohlc = generateOHLC(closes.length > 0 ? closes[closes.length - 1] : 100);
+                opens.push(ohlc.open);
+                highs.push(ohlc.high);
+                lows.push(ohlc.low);
+                closes.push(ohlc.close);
+                prices.push(ohlc.close);
             }
             updateData();
             btnStart.textContent = '▶ Play';
@@ -1137,8 +1351,12 @@
         function init() {
             // Seed initial data
             for (let i = 0; i < 35; i++) {
-                const p = i === 0 ? 100 + Math.random() * 4 : generatePrice(prices[prices.length - 1]);
-                prices.push(p);
+                const ohlc = generateOHLC(closes.length > 0 ? closes[closes.length - 1] : 100);
+                opens.push(ohlc.open);
+                highs.push(ohlc.high);
+                lows.push(ohlc.low);
+                closes.push(ohlc.close);
+                prices.push(ohlc.close);
             }
             updateData();
 
@@ -1163,7 +1381,7 @@
                 addBar();
             }, 200);
 
-            console.log('✅ GMMG Strategy Visualizer initialized!');
+            console.log('✅ GMMG Strategy Visualizer with Candlesticks initialized!');
             console.log('📊 Bars:', prices.length);
             console.log('🔄 Status: Running');
         }
