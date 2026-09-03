@@ -3,23 +3,16 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GMMG Strategy Visualizer - Fibonacci + Screenshots</title>
+    <title>GMMG Strategy Visualizer - Enhanced Screenshots</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #0b1120;
             color: #e2e8f0;
             padding: 16px;
         }
-        .container {
-            max-width: 1500px;
-            margin: 0 auto;
-        }
+        .container { max-width: 1500px; margin: 0 auto; }
         header {
             background: #1a2332;
             padding: 14px 20px;
@@ -272,13 +265,13 @@
         }
         .legend-color.candle-green { background: #22c55e; }
         .legend-color.candle-red { background: #ef4444; }
-        .legend-color.ema { background: #fbbf24; border-top: 2px dashed #fbbf24; height: 0; }
-        .legend-color.alma { background: #06b6d4; border-top: 2px dashed #06b6d4; height: 0; }
+        .legend-color.ema { background: #fbbf24; border-top: 2px solid #fbbf24; height: 0; }
+        .legend-color.alma { background: #06b6d4; border-top: 2px solid #06b6d4; height: 0; }
         .legend-color.rsi { background: #8b5cf6; }
-        .legend-color.rsi70 { background: #ef444444; border-top: 1px dashed #ef4444; height: 0; }
-        .legend-color.rsi30 { background: #22c55e44; border-top: 1px dashed #22c55e; height: 0; }
-        .legend-color.support { background: #22c55e66; border-top: 1px dashed #22c55e; height: 0; }
-        .legend-color.resistance { background: #ef444466; border-top: 1px dashed #ef4444; height: 0; }
+        .legend-color.rsi70 { background: #ef444444; border-top: 2px dotted #ef4444; height: 0; }
+        .legend-color.rsi30 { background: #22c55e44; border-top: 2px dotted #22c55e; height: 0; }
+        .legend-color.support { background: #22c55e; border-top: 2px solid #22c55e; height: 0; }
+        .legend-color.resistance { background: #ef4444; border-top: 2px solid #ef4444; height: 0; }
         .legend-color.buy-signal { background: #22c55e; width: 10px; height: 10px; border-radius: 50%; }
         .legend-color.sell-signal { background: #ef4444; width: 10px; height: 10px; border-radius: 50%; }
         .legend-color.fib-618 { background: #f472b6; border-top: 2px solid #f472b6; height: 0; }
@@ -371,9 +364,9 @@
             border: 1px solid #2d3b4f;
             border-radius: 12px;
             padding: 20px;
-            max-width: 900px;
+            max-width: 950px;
             width: 95%;
-            max-height: 90vh;
+            max-height: 92vh;
             overflow: auto;
         }
         .modal-header {
@@ -400,6 +393,7 @@
             width: 100%;
             border-radius: 8px;
             border: 1px solid #253141;
+            background: #0b1120;
         }
         .modal .screenshot-info {
             margin-top: 10px;
@@ -419,6 +413,29 @@
         .modal .screenshot-info .highlight-pink { color: #f472b6; }
         .modal .screenshot-info .highlight-orange { color: #fb923c; }
         .modal .screenshot-info .full-width { grid-column: 1 / -1; }
+        .modal .screenshot-info .legend-row {
+            grid-column: 1 / -1;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding-top: 6px;
+            border-top: 1px solid #1a2332;
+            font-size: 9px;
+            color: #94a3b8;
+        }
+        .modal .screenshot-info .legend-row .leg-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .modal .screenshot-info .legend-row .leg-color {
+            width: 16px;
+            height: 2px;
+            border-radius: 2px;
+        }
+        .modal .screenshot-info .legend-row .leg-color.solid { height: 2px; }
+        .modal .screenshot-info .legend-row .leg-color.dotted { border-top: 2px dotted; height: 0; }
+        .modal .screenshot-info .legend-row .leg-color.dashed { border-top: 2px dashed; height: 0; }
 
         .screenshot-counter {
             font-size: 11px;
@@ -430,14 +447,6 @@
             color: #22c55e;
             margin-left: 8px;
         }
-
-        /* Fibonacci overlay styles */
-        .fib-label {
-            font-size: 8px;
-            font-weight: 700;
-        }
-        .fib-label.fib-618 { color: #f472b6; }
-        .fib-label.fib-1618 { color: #fb923c; }
 
         @media (max-width: 1024px) {
             .grid-2 { grid-template-columns: 1fr; }
@@ -523,7 +532,7 @@
                     <span style="color:#fb923c;">1.618 Target</span>
                 </div>
 
-                <div class="legend-container">
+                <div class="legend-container" id="mainLegend">
                     <span class="legend-item"><span class="legend-color candle-green"></span> Bullish</span>
                     <span class="legend-item"><span class="legend-color candle-red"></span> Bearish</span>
                     <span class="legend-item"><span class="legend-color ema"></span> EMA</span>
@@ -668,15 +677,30 @@
                 <div><span class="highlight-pink">🩷 Fib 0.618:</span> <span id="screenshotFib618">--</span></div>
                 <div><span class="highlight-orange">🧡 Fib 1.618:</span> <span id="screenshotFib1618">--</span></div>
                 <div class="full-width"><span class="highlight-gold">📊 Details:</span> <span id="screenshotDetails">--</span></div>
+                <!-- Legend in Screenshot -->
+                <div class="legend-row" id="screenshotLegend">
+                    <span class="leg-item"><span class="leg-color solid" style="background:#22c55e;"></span> Bullish Candle</span>
+                    <span class="leg-item"><span class="leg-color solid" style="background:#ef4444;"></span> Bearish Candle</span>
+                    <span class="leg-item"><span class="leg-color solid" style="background:#fbbf24;"></span> EMA (9)</span>
+                    <span class="leg-item"><span class="leg-color solid" style="background:#06b6d4;"></span> ALMA</span>
+                    <span class="leg-item"><span class="leg-color solid" style="background:#8b5cf6;"></span> RSI (14)</span>
+                    <span class="leg-item"><span class="leg-color dotted" style="border-color:#ef4444;"></span> RSI 70</span>
+                    <span class="leg-item"><span class="leg-color dotted" style="border-color:#22c55e;"></span> RSI 30</span>
+                    <span class="leg-item"><span class="leg-color solid" style="background:#22c55e;"></span> Support</span>
+                    <span class="leg-item"><span class="leg-color solid" style="background:#ef4444;"></span> Resistance</span>
+                    <span class="leg-item"><span class="leg-color solid" style="background:#f472b6;"></span> Fib 0.618</span>
+                    <span class="leg-item"><span class="leg-color solid" style="background:#fb923c;"></span> Fib 1.618</span>
+                    <span class="leg-item"><span style="color:#22c55e;">▲</span> BUY</span>
+                    <span class="leg-item"><span style="color:#ef4444;">▼</span> SELL</span>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
         // ============================================================
-        //  GMMG STRATEGY VISUALIZER - Fibonacci + Screenshots
-        //  Tracks: Play (WHAT) + Divergence (HOW) + Fibonacci (0.618/1.618)
-        //  Calculates win rate for the combined setup
+        //  GMMG STRATEGY VISUALIZER - Enhanced Screenshot with Legend
+        //  Support/Resistance: Dark Solid · EMA/ALMA: Light Solid · RSI: Dotted
         // ============================================================
 
         (function() {
@@ -742,6 +766,7 @@
             const screenshotFib618 = document.getElementById('screenshotFib618');
             const screenshotFib1618 = document.getElementById('screenshotFib1618');
             const screenshotDetails = document.getElementById('screenshotDetails');
+            const screenshotLegend = document.getElementById('screenshotLegend');
 
             // --- State ---
             let prices = [];
@@ -756,7 +781,7 @@
             let signals = [];
             let playLogs = { tabo: [], momentum: [], bounce: [], divergence: [] };
             let screenshots = [];
-            let tradeResults = []; // {win: bool, playType: string, direction: string, fibHit: bool}
+            let tradeResults = [];
 
             let isRunning = true;
             let intervalId = null;
@@ -926,7 +951,6 @@
                 const len = priceData.length;
                 if (len < 20) return { fib618: null, fib1618: null, low: null, high: null };
 
-                // Find recent swing low and high
                 const lookback = 10;
                 let swingLow = Infinity,
                     swingHigh = -Infinity;
@@ -940,9 +964,7 @@
                         highIdx = i; }
                 }
 
-                // Ensure low is before high for retracement
                 if (lowIdx > highIdx) {
-                    // Swap if low is after high
                     const tempLow = swingLow;
                     swingLow = swingHigh;
                     swingHigh = tempLow;
@@ -951,10 +973,7 @@
                 const range = swingHigh - swingLow;
                 if (range <= 0) return { fib618: null, fib1618: null, low: null, high: null };
 
-                // 0.618 Retracement (Entry Zone)
                 const fib618Level = swingHigh - (range * 0.618);
-
-                // 1.618 Extension (Target)
                 const fib1618Level = swingHigh + (range * 0.618);
 
                 return {
@@ -1043,14 +1062,12 @@
                 resistance = levels.resistance || price * 1.03;
                 support = levels.support || price * 0.97;
 
-                // Calculate Fibonacci
                 const fib = calculateFibonacci(priceData);
                 fib618 = fib.fib618 || price * 0.97;
                 fib1618 = fib.fib1618 || price * 1.06;
                 fibLow = fib.low || price * 0.95;
                 fibHigh = fib.high || price * 1.05;
 
-                // Check if price is near 0.618 Fib level
                 const nearFib618 = fib618 ? Math.abs(price - fib618) / fib618 < 0.015 : false;
                 const fibHit = nearFib618;
 
@@ -1254,7 +1271,6 @@
                     rsiStatusText.style.color = '#fbbf24';
                 }
 
-                // Fibonacci displays
                 if (fib618) {
                     fib618Display.textContent = '$' + fib618.toFixed(2);
                 } else {
@@ -1285,7 +1301,6 @@
                                 <span class="play-time">${p.time || 'just now'}</span>
                                 ${p.screenshot ? ' 📸' : ''}
                                 ${p.fibHit ? ' <span class="fib-hit">🩷 Fib Hit</span>' : ''}
-                                ${p.fibTarget ? ' <span class="fib-target">🧡 Target</span>' : ''}
                             </div>
                             <div class="play-detail">${p.reason}</div>
                         </div>
@@ -1348,6 +1363,8 @@
             // --- Take Screenshot ---
             function takeScreenshot(playData, divergenceData) {
                 try {
+                    // Draw the chart with legend overlay for screenshot
+                    drawChart(true);
                     const dataUrl = canvas.toDataURL('image/png');
 
                     const screenshot = {
@@ -1381,6 +1398,9 @@
                     screenshotCountEl.textContent = '📸 ' + screenshotCounter;
                     showScreenshot(screenshot);
                     debugEl.textContent = '📸 Screenshot captured at ' + new Date().toLocaleTimeString();
+
+                    // Redraw without legend overlay for live view
+                    drawChart(false);
 
                 } catch (e) {
                     console.error('Screenshot error:', e);
@@ -1417,11 +1437,28 @@
                 screenshotFib1618.textContent = p.fib1618 !== '--' ? `$${p.fib1618.toFixed(2)}` : '--';
                 screenshotDetails.textContent = p.reason;
 
+                // Update legend in modal
+                screenshotLegend.innerHTML = `
+                    <span class="leg-item"><span class="leg-color solid" style="background:#22c55e;"></span> Bullish Candle</span>
+                    <span class="leg-item"><span class="leg-color solid" style="background:#ef4444;"></span> Bearish Candle</span>
+                    <span class="leg-item"><span class="leg-color solid" style="background:#fbbf24;"></span> EMA (9)</span>
+                    <span class="leg-item"><span class="leg-color solid" style="background:#06b6d4;"></span> ALMA</span>
+                    <span class="leg-item"><span class="leg-color solid" style="background:#8b5cf6;"></span> RSI (14)</span>
+                    <span class="leg-item"><span class="leg-color dotted" style="border-color:#ef4444;"></span> RSI 70</span>
+                    <span class="leg-item"><span class="leg-color dotted" style="border-color:#22c55e;"></span> RSI 30</span>
+                    <span class="leg-item"><span class="leg-color solid" style="background:#22c55e;"></span> Support</span>
+                    <span class="leg-item"><span class="leg-color solid" style="background:#ef4444;"></span> Resistance</span>
+                    <span class="leg-item"><span class="leg-color solid" style="background:#f472b6;"></span> Fib 0.618</span>
+                    <span class="leg-item"><span class="leg-color solid" style="background:#fb923c;"></span> Fib 1.618</span>
+                    <span class="leg-item"><span style="color:#22c55e;">▲</span> BUY</span>
+                    <span class="leg-item"><span style="color:#ef4444;">▼</span> SELL</span>
+                `;
+
                 modal.classList.add('active');
             }
 
-            // --- Draw chart with Fibonacci ---
-            function drawChart() {
+            // --- Draw chart with optional legend overlay for screenshot ---
+            function drawChart(forScreenshot) {
                 const rect = canvas.parentElement.getBoundingClientRect();
                 const W = canvas.parentElement.clientWidth || 800;
                 const H = canvas.parentElement.clientHeight || 380;
@@ -1475,13 +1512,13 @@
                     return pad.top + chartH - ((val - minRsi) / rsiRange) * chartH;
                 };
 
-                // RSI 70/30
+                // --- RSI 70/30 (DOTTED LINES) ---
                 const rsi70Y = getRsiY(70);
                 const rsi30Y = getRsiY(30);
 
                 ctx.strokeStyle = '#ef444444';
-                ctx.lineWidth = 1;
-                ctx.setLineDash([4, 4]);
+                ctx.lineWidth = 1.5;
+                ctx.setLineDash([3, 5]);
                 ctx.beginPath();
                 ctx.moveTo(pad.left, rsi70Y);
                 ctx.lineTo(W - pad.right, rsi70Y);
@@ -1492,21 +1529,22 @@
                 ctx.fillText('RSI 70', pad.left + 2, rsi70Y - 4);
 
                 ctx.strokeStyle = '#22c55e44';
+                ctx.lineWidth = 1.5;
+                ctx.setLineDash([3, 5]);
                 ctx.beginPath();
                 ctx.moveTo(pad.left, rsi30Y);
                 ctx.lineTo(W - pad.right, rsi30Y);
                 ctx.stroke();
                 ctx.fillStyle = '#22c55e66';
                 ctx.fillText('RSI 30', pad.left + 2, rsi30Y - 4);
+                ctx.setLineDash([]);
 
                 // --- Fibonacci Levels ---
                 if (showFib && fib618 && fib1618) {
                     const fib618Y = getPriceY(fib618);
                     const fib1618Y = getPriceY(fib1618);
-                    const fibLowY = fibLow ? getPriceY(fibLow) : null;
-                    const fibHighY = fibHigh ? getPriceY(fibHigh) : null;
 
-                    // Draw 0.618 (Entry Zone) - Pink
+                    // 0.618 (Entry Zone) - Pink
                     ctx.strokeStyle = '#f472b688';
                     ctx.lineWidth = 1.5;
                     ctx.setLineDash([6, 4]);
@@ -1519,7 +1557,7 @@
                     ctx.setLineDash([]);
                     ctx.fillText('🩷 0.618 $' + fib618.toFixed(2), W - pad.right - 90, fib618Y - 4);
 
-                    // Draw 1.618 (Target) - Orange
+                    // 1.618 (Target) - Orange
                     ctx.strokeStyle = '#fb923c88';
                     ctx.lineWidth = 1.5;
                     ctx.setLineDash([6, 4]);
@@ -1529,56 +1567,43 @@
                     ctx.stroke();
                     ctx.fillStyle = '#fb923c88';
                     ctx.fillText('🧡 1.618 $' + fib1618.toFixed(2), W - pad.right - 90, fib1618Y - 4);
-
-                    // Draw Fibonacci Zone (between low and high)
-                    if (fibLowY && fibHighY) {
-                        ctx.strokeStyle = '#f472b622';
-                        ctx.lineWidth = 1;
-                        ctx.setLineDash([2, 4]);
-                        ctx.beginPath();
-                        ctx.moveTo(pad.left, fibLowY);
-                        ctx.lineTo(W - pad.right, fibLowY);
-                        ctx.stroke();
-                        ctx.fillStyle = '#f472b622';
-                        ctx.fillText('↙ Fib Low $' + fibLow.toFixed(2), pad.left + 2, fibLowY + 12);
-                        ctx.fillStyle = '#fb923c22';
-                        ctx.fillText('↗ Fib High $' + fibHigh.toFixed(2), pad.left + 2, fibHighY - 4);
-                    }
                     ctx.setLineDash([]);
                 }
 
-                // Support/Resistance
+                // --- Support/Resistance (DARK SOLID LINES) ---
                 if (showLevels && resistance && support) {
                     const resY = getPriceY(resistance);
                     const supY = getPriceY(support);
 
-                    ctx.strokeStyle = '#ef444466';
-                    ctx.lineWidth = 1.5;
-                    ctx.setLineDash([6, 4]);
+                    // Resistance - Dark Red Solid
+                    ctx.strokeStyle = '#dc2626';
+                    ctx.lineWidth = 2;
+                    ctx.setLineDash([]);
                     ctx.beginPath();
                     ctx.moveTo(pad.left, resY);
                     ctx.lineTo(W - pad.right, resY);
                     ctx.stroke();
-                    ctx.fillStyle = '#ef444466';
+                    ctx.fillStyle = '#dc2626cc';
                     ctx.font = '8px Segoe UI, sans-serif';
-                    ctx.setLineDash([]);
                     ctx.fillText('🔴 R $' + resistance.toFixed(2), W - pad.right - 80, resY - 4);
 
-                    ctx.strokeStyle = '#22c55e66';
+                    // Support - Dark Green Solid
+                    ctx.strokeStyle = '#16a34a';
+                    ctx.lineWidth = 2;
+                    ctx.setLineDash([]);
                     ctx.beginPath();
                     ctx.moveTo(pad.left, supY);
                     ctx.lineTo(W - pad.right, supY);
                     ctx.stroke();
-                    ctx.fillStyle = '#22c55e66';
+                    ctx.fillStyle = '#16a34acc';
                     ctx.fillText('🟢 S $' + support.toFixed(2), W - pad.right - 80, supY - 4);
-                    ctx.setLineDash([]);
                 }
 
-                // EMA
+                // --- EMA (LIGHT SOLID LINE) ---
                 if (emaVals.length > 0) {
                     ctx.strokeStyle = '#fbbf2488';
                     ctx.lineWidth = 1.5;
-                    ctx.setLineDash([4, 4]);
+                    ctx.setLineDash([]);
                     ctx.beginPath();
                     let emaStarted = false;
                     for (let i = 0; i < len; i++) {
@@ -1589,14 +1614,13 @@
                             emaStarted = true; } else ctx.lineTo(x, y);
                     }
                     ctx.stroke();
-                    ctx.setLineDash([]);
                 }
 
-                // ALMA
+                // --- ALMA (LIGHT SOLID LINE) ---
                 if (almaVals.length > 0) {
                     ctx.strokeStyle = '#06b6d488';
                     ctx.lineWidth = 1.5;
-                    ctx.setLineDash([4, 4]);
+                    ctx.setLineDash([]);
                     ctx.beginPath();
                     let almaStarted = false;
                     for (let i = 0; i < len; i++) {
@@ -1607,13 +1631,13 @@
                             almaStarted = true; } else ctx.lineTo(x, y);
                     }
                     ctx.stroke();
-                    ctx.setLineDash([]);
                 }
 
-                // RSI
+                // --- RSI LINE ---
                 if (rsiVals.length > 0) {
                     ctx.strokeStyle = '#8b5cf6';
                     ctx.lineWidth = 1.5;
+                    ctx.setLineDash([]);
                     ctx.beginPath();
                     let rsiStarted = false;
                     for (let i = 0; i < len; i++) {
@@ -1626,7 +1650,7 @@
                     ctx.stroke();
                 }
 
-                // Candlesticks
+                // --- Candlesticks ---
                 const candleWidth = Math.min(6, chartW / len * 0.6);
 
                 for (let i = 0; i < len && i < opens.length; i++) {
@@ -1662,7 +1686,7 @@
                     ctx.strokeRect(x - candleWidth / 2, bodyTop, candleWidth, bodyHeight);
                 }
 
-                // Divergences
+                // --- Divergences ---
                 const divergences = detectDivergences(prices, rsiVals);
                 divergences.forEach(div => {
                     if (div.idx1 < 0 || div.idx2 < 0 || div.idx1 >= len || div.idx2 >= len) return;
@@ -1695,7 +1719,7 @@
                     ctx.textAlign = 'left';
                 });
 
-                // Buy/Sell Signals
+                // --- Buy/Sell Signals ---
                 signals.forEach(signal => {
                     if (signal.idx < 0 || signal.idx >= len) return;
                     const x = getX(signal.idx);
@@ -1730,7 +1754,7 @@
                     ctx.textAlign = 'left';
                 });
 
-                // Current price
+                // --- Current price ---
                 const lastIdx = len - 1;
                 const lastPrice = prices[lastIdx];
                 const lastX = getX(lastIdx);
@@ -1740,7 +1764,7 @@
                 ctx.textAlign = 'left';
                 ctx.fillText('$' + lastPrice.toFixed(2), lastX + 4, lastY - 4);
 
-                // RSI label
+                // --- RSI label ---
                 const lastRsi = rsiVals[lastIdx];
                 if (lastRsi !== null && lastRsi !== undefined) {
                     const rsiY = getRsiY(lastRsi);
@@ -1749,7 +1773,7 @@
                     ctx.fillText('RSI: ' + lastRsi.toFixed(0), pad.left + 4, rsiY - 4);
                 }
 
-                // Y-axis labels
+                // --- Y-axis labels ---
                 ctx.fillStyle = '#475569';
                 ctx.font = '7px Segoe UI, sans-serif';
                 ctx.textAlign = 'right';
@@ -1767,11 +1791,60 @@
                     ctx.fillText(rsiVal.toFixed(0), W - pad.right + 4, y + 3);
                 }
 
-                chartInitialized = true;
-                debugEl.textContent = '✅ Running | Bars: ' + len + ' | Price: $' + lastPrice.toFixed(2) + ' | RSI: ' + (lastRsi !==
-                    null && lastRsi !== undefined ? lastRsi.toFixed(0) : '--');
+                // --- Legend Overlay for Screenshot ---
+                if (forScreenshot) {
+                    const legX = pad.left + 4;
+                    const legY = pad.top + 4;
+                    const legItems = [
+                        { color: '#22c55e', label: 'Bullish', type: 'solid' },
+                        { color: '#ef4444', label: 'Bearish', type: 'solid' },
+                        { color: '#fbbf24', label: 'EMA', type: 'solid' },
+                        { color: '#06b6d4', label: 'ALMA', type: 'solid' },
+                        { color: '#8b5cf6', label: 'RSI', type: 'solid' },
+                        { color: '#ef4444', label: 'RSI 70', type: 'dotted' },
+                        { color: '#22c55e', label: 'RSI 30', type: 'dotted' },
+                        { color: '#16a34a', label: 'Support', type: 'solid' },
+                        { color: '#dc2626', label: 'Resistance', type: 'solid' },
+                        { color: '#f472b6', label: 'Fib 0.618', type: 'solid' },
+                        { color: '#fb923c', label: 'Fib 1.618', type: 'solid' },
+                    ];
 
-                updateKeyLevelsDisplay();
+                    // Background for legend
+                    ctx.fillStyle = 'rgba(11, 17, 32, 0.85)';
+                    ctx.roundRect ? ctx.roundRect(legX - 4, legY - 4, 180, legItems.length * 14 + 8, 4) : null;
+                    ctx.fillRect(legX - 4, legY - 4, 180, legItems.length * 14 + 8);
+
+                    ctx.font = '7px Segoe UI, sans-serif';
+                    let yPos = legY + 4;
+                    legItems.forEach(item => {
+                        // Color swatch
+                        if (item.type === 'dotted') {
+                            ctx.strokeStyle = item.color;
+                            ctx.lineWidth = 1.5;
+                            ctx.setLineDash([2, 3]);
+                            ctx.beginPath();
+                            ctx.moveTo(legX, yPos + 4);
+                            ctx.lineTo(legX + 12, yPos + 4);
+                            ctx.stroke();
+                            ctx.setLineDash([]);
+                        } else {
+                            ctx.fillStyle = item.color;
+                            ctx.fillRect(legX, yPos + 2, 12, 4);
+                        }
+                        // Label
+                        ctx.fillStyle = '#94a3b8';
+                        ctx.textAlign = 'left';
+                        ctx.fillText(item.label, legX + 16, yPos + 6);
+                        yPos += 14;
+                    });
+                }
+
+                if (!forScreenshot) {
+                    chartInitialized = true;
+                    debugEl.textContent = '✅ Running | Bars: ' + len + ' | Price: $' + lastPrice.toFixed(2) + ' | RSI: ' + (
+                        lastRsi !== null && lastRsi !== undefined ? lastRsi.toFixed(0) : '--');
+                    updateKeyLevelsDisplay();
+                }
             }
 
             // --- Update data with win rate tracking ---
@@ -1786,17 +1859,12 @@
                 const newPlays = detectPlays(prices, rsiVals, emaVals, almaVals);
                 const divergences = detectDivergences(prices, rsiVals);
 
-                // Track wins/losses for each play
                 newPlays.forEach(p => {
-                    // Determine if this play would be a winner (simplified)
-                    // If price reaches 1.618 target within next 10 bars, it's a win
                     let isWin = false;
                     let targetReached = false;
                     const startIdx = prices.length - 1;
 
-                    // Check if there's enough data to determine outcome
                     if (prices.length > startIdx + 1) {
-                        // Simulate: check if price reaches 1.618 within next 10 bars
                         const fibTarget = p.fib1618;
                         if (fibTarget) {
                             for (let i = startIdx + 1; i < Math.min(prices.length, startIdx + 11); i++) {
@@ -1809,17 +1877,14 @@
                                 }
                             }
                         }
-                        // If target reached, it's a win
                         isWin = targetReached;
                     }
 
-                    // Track trade result
                     if (prices.length > 5) {
                         totalTrades++;
                         if (isWin) wins++;
                     }
 
-                    // Record the trade result for win rate calculation
                     const fibHit = p.fibHit || false;
                     tradeResults.push({
                         win: isWin,
@@ -1831,7 +1896,6 @@
                     });
                     if (tradeResults.length > 100) tradeResults.shift();
 
-                    // Add to play logs with win/loss info
                     const logEntry = {
                         ...p,
                         time: new Date().toLocaleTimeString(),
@@ -1845,7 +1909,6 @@
                         momentumPlays++; } else if (p.type === 'bounce') { playLogs.bounce.push(logEntry);
                         bouncePlays++; }
 
-                    // Take screenshot with play and divergence info
                     const matchingDivergence = divergences.length > 0 ? divergences[divergences.length - 1] : null;
                     takeScreenshot(p, matchingDivergence);
                 });
@@ -1872,7 +1935,6 @@
                     }
                 }
 
-                // Update win rate display
                 const winRate = totalTrades > 0 ? Math.round((wins / totalTrades) * 100) : 0;
                 winRateDisplay.textContent = '🏆 ' + winRate + '%';
                 winRateStat.textContent = winRate + '%';
@@ -1882,7 +1944,6 @@
                 playCount.textContent = (taboPlays + momentumPlays + bouncePlays) + ' plays';
                 updatePlayLogs();
 
-                // Update current play display
                 if (newPlays.length > 0) {
                     const latest = newPlays[newPlays.length - 1];
                     const emoji = latest.direction === 'long' ? '🟢' : '🔴';
@@ -1921,7 +1982,6 @@
                     plays.push({ ...latest, timestamp: new Date() });
                     if (plays.length > 50) plays.shift();
 
-                    // Add signals for chart
                     const signalType = latest.direction === 'long' ? 'buy' : 'sell';
                     signals.push({ idx: prices.length - 1, type: signalType, play: latest });
                     if (signals.length > 30) signals.shift();
@@ -1947,7 +2007,7 @@
 
                 const lastIdx = prices.length - 1;
                 barCountEl.textContent = 'Bars: ' + prices.length;
-                drawChart();
+                drawChart(false);
             }
 
             // --- Add bar ---
@@ -2091,14 +2151,14 @@
             function toggleLevels() {
                 showLevels = !showLevels;
                 btnLevels.textContent = showLevels ? 'S/R: ON' : 'S/R: OFF';
-                drawChart();
+                drawChart(false);
             }
 
             function toggleFib() {
                 showFib = !showFib;
                 btnFib.textContent = showFib ? 'Fib: ON' : 'Fib: OFF';
                 btnFib.className = showFib ? 'fib-btn active' : 'fib-btn';
-                drawChart();
+                drawChart(false);
             }
 
             function manualScreenshot() {
@@ -2109,6 +2169,7 @@
                     takeScreenshot(lastPlay, lastDiv);
                 } else {
                     try {
+                        drawChart(true);
                         const dataUrl = canvas.toDataURL('image/png');
                         const screenshot = {
                             image: dataUrl,
@@ -2122,6 +2183,7 @@
                         screenshotCountEl.textContent = '📸 ' + screenshotCounter;
                         showScreenshot(screenshot);
                         debugEl.textContent = '📸 Manual screenshot captured at ' + new Date().toLocaleTimeString();
+                        drawChart(false);
                     } catch (e) {
                         console.error('Manual screenshot error:', e);
                     }
@@ -2130,7 +2192,7 @@
 
             // --- Handle resize ---
             function handleResize() {
-                drawChart();
+                drawChart(false);
             }
 
             // --- Initialize ---
@@ -2148,7 +2210,7 @@
                 emaVals = calculateEMA(prices, 9);
                 almaVals = calculateALMA(prices, 9, 6, 0.85);
 
-                drawChart();
+                drawChart(false);
                 barCountEl.textContent = 'Bars: ' + prices.length;
                 debugEl.textContent = '✅ Initialized with ' + prices.length + ' bars';
 
@@ -2195,7 +2257,7 @@
                     });
                 });
 
-                console.log('✅ GMMG Strategy Visualizer with Fibonacci + Screenshots initialized!');
+                console.log('✅ GMMG Strategy Visualizer with Enhanced Screenshots initialized!');
                 console.log('📊 Bars:', prices.length);
             }
 
@@ -2207,7 +2269,7 @@
 
             setTimeout(function() {
                 if (!chartInitialized) {
-                    drawChart();
+                    drawChart(false);
                 }
             }, 100);
 
