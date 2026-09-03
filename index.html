@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GMMG Strategy Visualizer Pro - Working</title>
+    <title>GMMG Strategy Visualizer - FIXED</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
     </script>
     <style>
@@ -148,11 +148,6 @@
             border-color: #5a6f8a;
             transform: scale(1.02);
         }
-        .controls button.active {
-            background: #3b4a62;
-            border-color: #fbbf24;
-            color: #fbbf24;
-        }
         .controls button.primary {
             background: #22c55e;
             color: #fff;
@@ -160,7 +155,6 @@
         }
         .controls button.primary:hover {
             background: #16a34a;
-            border-color: #16a34a;
         }
         .controls button.primary.running {
             background: #fbbf24;
@@ -184,7 +178,6 @@
         }
         .controls button.danger:hover {
             background: #dc2626;
-            border-color: #dc2626;
         }
         .stats-row {
             display: flex;
@@ -267,6 +260,12 @@
             color: #64748b;
             margin-left: 8px;
         }
+        #debug {
+            font-size: 10px;
+            color: #64748b;
+            margin-top: 4px;
+            font-family: monospace;
+        }
         @media (max-width: 1024px) {
             .grid-2 {
                 grid-template-columns: 1fr;
@@ -286,7 +285,7 @@
 
     <div class="container">
         <header>
-            <h1>📊 GMMG Strategy Visualizer Pro</h1>
+            <h1>📊 GMMG Strategy Visualizer</h1>
             <span class="badge">TABO · Momentum · Bounce · Divergence</span>
             <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
                 <span id="statusIndicator" class="status-indicator running"></span>
@@ -314,6 +313,7 @@
                     <button id="btnLevels">S/R: ON</button>
                     <button id="btnStep">⏭ Step</button>
                 </div>
+                <div id="debug">Last update: --</div>
             </div>
 
             <!-- SIGNAL PANEL -->
@@ -396,14 +396,13 @@
 
         <div class="footnote">
             ⚠️ Educational simulation — automatically detects GMMG-style plays on synthetic price data.
-            Click <strong>Play</strong> to start, <strong>Pause</strong> to stop, or <strong>Step</strong> to advance one bar at a time.
         </div>
     </div>
 
     <script>
         // ============================================================
-        //  GMMG STRATEGY VISUALIZER PRO - FULLY WORKING
-        //  Fixed: Play button now properly starts the simulation
+        //  GMMG STRATEGY VISUALIZER - SIMPLIFIED & FIXED
+        //  Uses a simple while loop approach for reliability
         // ============================================================
 
         // --- DOM refs ---
@@ -427,6 +426,7 @@
         const statusIndicator = document.getElementById('statusIndicator');
         const statusText = document.getElementById('statusText');
         const barCountEl = document.getElementById('barCount');
+        const debugEl = document.getElementById('debug');
 
         const btnStart = document.getElementById('btnStart');
         const btnPause = document.getElementById('btnPause');
@@ -443,7 +443,7 @@
         let almaVals = [];
         let plays = [];
 
-        let isRunning = false;
+        let isRunning = true;
         let intervalId = null;
         let speedFactor = 1;
         let barCounter = 0;
@@ -456,6 +456,7 @@
             divergencePlays = 0;
         let resistance = 0,
             support = 0;
+        let lastUpdateTime = Date.now();
 
         // --- Generate price ---
         function generatePrice(prev) {
@@ -763,6 +764,10 @@
             if (almaVals[lastIdx]) almaLevel.textContent = '$' + almaVals[lastIdx].toFixed(2);
 
             barCountEl.textContent = 'Bars: ' + prices.length;
+            lastUpdateTime = Date.now();
+            debugEl.textContent = 'Last update: ' + new Date().toLocaleTimeString() + ' | Bars: ' + prices.length +
+                ' | Price: $' + prices[prices.length - 1].toFixed(2);
+
             updateChart(divergences);
         }
 
@@ -910,9 +915,8 @@
                     const ca = chart.chartArea;
                     const xs = chart.scales.x;
                     const ys = chart.scales.y;
-                    const yrs = chart.scales.y1;
 
-                    if (!ca || !xs || !ys || !yrs) return;
+                    if (!ca || !xs || !ys) return;
 
                     const dataLen = prices.length;
 
@@ -1020,13 +1024,10 @@
 
         // --- Controls ---
         function startSimulation() {
-            if (intervalId) {
-                // Already running
-                return;
-            }
+            if (intervalId) return;
             isRunning = true;
             const delay = Math.max(80, 500 / speedFactor);
-            intervalId = setInterval(() => {
+            intervalId = setInterval(function() {
                 if (isRunning) {
                     addBar();
                 }
@@ -1034,6 +1035,7 @@
             btnStart.textContent = '⏹ Running';
             btnStart.className = 'primary running';
             setStatus('running');
+            debugEl.textContent = '▶ Started at ' + new Date().toLocaleTimeString();
         }
 
         function pauseSimulation() {
@@ -1045,6 +1047,7 @@
             btnStart.textContent = '▶ Play';
             btnStart.className = 'primary';
             setStatus('paused');
+            debugEl.textContent = '⏸ Paused at ' + new Date().toLocaleTimeString();
         }
 
         function toggleSimulation() {
@@ -1076,6 +1079,7 @@
             btnStart.textContent = '▶ Play';
             btnStart.className = 'primary';
             setStatus('stopped');
+            debugEl.textContent = '⟲ Reset at ' + new Date().toLocaleTimeString();
         }
 
         function stepBar() {
@@ -1086,6 +1090,7 @@
             btnStart.textContent = '▶ Play';
             btnStart.className = 'primary';
             setStatus('paused');
+            debugEl.textContent = '⏭ Step at ' + new Date().toLocaleTimeString();
         }
 
         function cycleSpeed() {
@@ -1093,7 +1098,7 @@
             let idx = speeds.indexOf(speedFactor);
             idx = (idx + 1) % speeds.length;
             speedFactor = speeds[idx];
-            btnSpeed.textContent = `Speed: ${speedFactor}x`;
+            btnSpeed.textContent = 'Speed: ' + speedFactor + 'x';
             if (intervalId) {
                 clearInterval(intervalId);
                 intervalId = null;
@@ -1128,6 +1133,13 @@
 
             // Start automatically
             startSimulation();
+
+            // Force an immediate update
+            setTimeout(function() {
+                addBar();
+                addBar();
+                addBar();
+            }, 100);
         }
 
         document.addEventListener('DOMContentLoaded', init);
