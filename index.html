@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GMMG Strategy Visualizer - Key Levels Below Chart</title>
+    <title>GMMG Strategy Visualizer - Screenshot Capture</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -81,10 +81,10 @@
             display: block;
         }
 
-        /* Key Levels Bar - positioned below chart */
+        /* Key Levels Bar */
         .key-levels-bar {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(5, 1fr);
             gap: 8px;
             margin-top: 10px;
             padding: 8px 12px;
@@ -113,6 +113,7 @@
         .key-level-item .kl-value.support { color: #22c55e; }
         .key-level-item .kl-value.ema { color: #fbbf24; }
         .key-level-item .kl-value.alma { color: #06b6d4; }
+        .key-level-item .kl-value.rsi-value { color: #8b5cf6; }
         .key-level-item .kl-value .change {
             font-size: 10px;
             font-weight: 400;
@@ -120,6 +121,18 @@
         }
         .key-level-item .kl-value .change.up { color: #22c55e; }
         .key-level-item .kl-value .change.down { color: #ef4444; }
+
+        .rsi-status {
+            display: inline-block;
+            padding: 0 8px;
+            border-radius: 10px;
+            font-size: 9px;
+            font-weight: 700;
+            margin-left: 4px;
+        }
+        .rsi-status.oversold { background: #22c55e33; color: #22c55e; border: 1px solid #22c55e; }
+        .rsi-status.overbought { background: #ef444433; color: #ef4444; border: 1px solid #ef4444; }
+        .rsi-status.neutral { background: #fbbf2433; color: #fbbf24; border: 1px solid #fbbf24; }
 
         .pattern-box {
             padding: 10px 14px;
@@ -170,6 +183,13 @@
         .controls button.danger:hover { background: #dc2626; }
         .controls button.secondary { background: #3b4a62; color: #e2e8f0; border-color: #3b4a62; }
         .controls button.secondary:hover { background: #4a5a72; }
+        .controls button.screenshot-btn {
+            background: #8b5cf6;
+            color: #fff;
+            border-color: #8b5cf6;
+        }
+        .controls button.screenshot-btn:hover { background: #7c3aed; }
+
         .stats-row {
             display: flex;
             justify-content: space-between;
@@ -288,15 +308,102 @@
         .play-list.collapsed { display: none; }
         .no-plays { color: #475569; font-size: 10px; font-style: italic; padding: 4px 0; }
 
+        .rsi-status-bar {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 10px;
+            color: #94a3b8;
+            margin-top: 2px;
+        }
+        .rsi-status-bar .rsi-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .rsi-status-bar .rsi-dot.bullish { background: #22c55e; }
+        .rsi-status-bar .rsi-dot.bearish { background: #ef4444; }
+        .rsi-status-bar .rsi-dot.neutral { background: #fbbf24; }
+
+        /* Screenshot Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: #141d2b;
+            border: 1px solid #2d3b4f;
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 900px;
+            width: 95%;
+            max-height: 90vh;
+            overflow: auto;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .modal-header h3 {
+            color: #fbbf24;
+            font-size: 16px;
+        }
+        .modal-header .close-btn {
+            background: #ef4444;
+            border: none;
+            color: #fff;
+            padding: 4px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .modal-header .close-btn:hover { background: #dc2626; }
+        .modal img {
+            width: 100%;
+            border-radius: 8px;
+            border: 1px solid #253141;
+        }
+        .modal .screenshot-info {
+            margin-top: 10px;
+            padding: 10px;
+            background: #0f1729;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #cbd5e1;
+        }
+        .modal .screenshot-info .highlight-green { color: #22c55e; }
+        .modal .screenshot-info .highlight-red { color: #ef4444; }
+        .modal .screenshot-info .highlight-gold { color: #fbbf24; }
+        .modal .screenshot-info .highlight-purple { color: #8b5cf6; }
+
+        .screenshot-counter {
+            font-size: 11px;
+            color: #64748b;
+            margin-left: 8px;
+        }
+
         @media (max-width: 1024px) {
             .grid-2 { grid-template-columns: 1fr; }
             .grid-3 { grid-template-columns: 1fr 1fr; }
-            .key-levels-bar { grid-template-columns: repeat(2, 1fr); }
+            .key-levels-bar { grid-template-columns: repeat(3, 1fr); }
         }
         @media (max-width: 600px) {
             .grid-3 { grid-template-columns: 1fr; }
             .legend-container { font-size: 8px; gap: 6px; }
-            .key-levels-bar { grid-template-columns: 1fr 1fr; gap: 4px; }
+            .key-levels-bar { grid-template-columns: repeat(2, 1fr); gap: 4px; }
             .key-level-item .kl-value { font-size: 12px; }
         }
     </style>
@@ -312,6 +419,7 @@
                 <span id="statusText" class="status-text">Running</span>
                 <span id="barCount" class="bar-counter">Bars: 0</span>
                 <span id="signalBadge" class="signal-badge neutral">⏳ Waiting</span>
+                <span id="screenshotCount" class="screenshot-counter">📸 0</span>
             </div>
         </header>
 
@@ -322,11 +430,11 @@
                     <span>Price · RSI · Support/Resistance · Candlesticks</span>
                     <span id="currentPlay" style="color:#fbbf24;">No play detected</span>
                 </div>
-                <div class="chart-container">
+                <div class="chart-container" id="chartContainer">
                     <canvas id="mainChart"></canvas>
                 </div>
 
-                <!-- KEY LEVELS BAR - Positioned directly below chart -->
+                <!-- KEY LEVELS BAR -->
                 <div class="key-levels-bar">
                     <div class="key-level-item">
                         <span class="kl-label">🔴 Resistance</span>
@@ -344,6 +452,21 @@
                         <span class="kl-label">🔷 ALMA</span>
                         <span class="kl-value alma" id="almaDisplay">--</span>
                     </div>
+                    <div class="key-level-item">
+                        <span class="kl-label">🟣 RSI (14)</span>
+                        <span class="kl-value rsi-value" id="rsiDisplay">
+                            -- 
+                            <span class="rsi-status neutral" id="rsiStatusBadge">NEUTRAL</span>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="rsi-status-bar" id="rsiStatusBar">
+                    <span class="rsi-dot neutral" id="rsiDot"></span>
+                    <span id="rsiStatusText">RSI: -- (Neutral)</span>
+                    <span style="color:#64748b;margin-left:8px;">|</span>
+                    <span style="color:#22c55e;">Oversold: &lt; 30</span>
+                    <span style="color:#ef4444;">Overbought: &gt; 70</span>
                 </div>
 
                 <div class="legend-container">
@@ -358,6 +481,7 @@
                     <span class="legend-item"><span class="legend-color resistance"></span> Resistance</span>
                     <span class="legend-item"><span class="legend-color buy-signal"></span> BUY Signal</span>
                     <span class="legend-item"><span class="legend-color sell-signal"></span> SELL Signal</span>
+                    <span class="legend-item"><span style="color:#8b5cf6;">📸</span> Screenshot Captured</span>
                 </div>
                 <div class="controls">
                     <button id="btnStart" class="primary running">⏹ Running</button>
@@ -366,6 +490,7 @@
                     <button id="btnSpeed" class="secondary">Speed: 1x</button>
                     <button id="btnLevels" class="secondary">S/R: ON</button>
                     <button id="btnStep" class="secondary">⏭ Step</button>
+                    <button id="btnScreenshot" class="screenshot-btn">📸 Screenshot</button>
                 </div>
                 <div id="debug">▶ Initializing...</div>
             </div>
@@ -456,13 +581,31 @@
         <div class="footnote">
             ⚠️ Educational simulation — automatically detects GMMG-style plays on synthetic price data.
             <span style="color:#22c55e;">🟢</span> = BUY Signal &nbsp;|&nbsp; <span style="color:#ef4444;">🔴</span> = SELL Signal
+            &nbsp;|&nbsp; <span style="color:#8b5cf6;">📸</span> = Screenshot captured on play detection
+        </div>
+    </div>
+
+    <!-- Screenshot Modal -->
+    <div class="modal-overlay" id="screenshotModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>📸 Screenshot Review</h3>
+                <button class="close-btn" id="modalCloseBtn">✕ Close</button>
+            </div>
+            <img id="screenshotImage" src="" alt="Screenshot" />
+            <div class="screenshot-info" id="screenshotInfo">
+                <div><span class="highlight-gold">📋 Play:</span> <span id="screenshotPlay">--</span></div>
+                <div><span class="highlight-purple">🖐️ Pattern:</span> <span id="screenshotPattern">--</span></div>
+                <div><span class="highlight-green">📈 Signal:</span> <span id="screenshotSignal">--</span></div>
+                <div><span class="highlight-gold">📊 Details:</span> <span id="screenshotDetails">--</span></div>
+            </div>
         </div>
     </div>
 
     <script>
         // ============================================================
-        //  GMMG STRATEGY VISUALIZER - Key Levels Below Chart
-        //  All key levels displayed in a clean bar under the chart
+        //  GMMG STRATEGY VISUALIZER - With Screenshot Capture
+        //  Automatically captures screenshots when plays are detected
         // ============================================================
 
         (function() {
@@ -471,6 +614,7 @@
             // --- DOM refs ---
             const canvas = document.getElementById('mainChart');
             const ctx = canvas.getContext('2d');
+            const chartContainer = document.getElementById('chartContainer');
 
             const signalBadge = document.getElementById('signalBadge');
             const currentPlay = document.getElementById('currentPlay');
@@ -487,16 +631,20 @@
             const bounceList = document.getElementById('bounceList');
             const divergenceList = document.getElementById('divergenceList');
 
-            // Key Level displays (below chart)
             const resistanceDisplay = document.getElementById('resistanceDisplay');
             const supportDisplay = document.getElementById('supportDisplay');
             const emaDisplay = document.getElementById('emaDisplay');
             const almaDisplay = document.getElementById('almaDisplay');
+            const rsiDisplay = document.getElementById('rsiDisplay');
+            const rsiStatusBadge = document.getElementById('rsiStatusBadge');
+            const rsiDot = document.getElementById('rsiDot');
+            const rsiStatusText = document.getElementById('rsiStatusText');
 
             const statusIndicator = document.getElementById('statusIndicator');
             const statusText = document.getElementById('statusText');
             const barCountEl = document.getElementById('barCount');
             const debugEl = document.getElementById('debug');
+            const screenshotCountEl = document.getElementById('screenshotCount');
 
             const btnStart = document.getElementById('btnStart');
             const btnPause = document.getElementById('btnPause');
@@ -504,6 +652,16 @@
             const btnSpeed = document.getElementById('btnSpeed');
             const btnLevels = document.getElementById('btnLevels');
             const btnStep = document.getElementById('btnStep');
+            const btnScreenshot = document.getElementById('btnScreenshot');
+
+            // Modal refs
+            const modal = document.getElementById('screenshotModal');
+            const modalCloseBtn = document.getElementById('modalCloseBtn');
+            const screenshotImage = document.getElementById('screenshotImage');
+            const screenshotPlay = document.getElementById('screenshotPlay');
+            const screenshotPattern = document.getElementById('screenshotPattern');
+            const screenshotSignal = document.getElementById('screenshotSignal');
+            const screenshotDetails = document.getElementById('screenshotDetails');
 
             // --- State ---
             let prices = [];
@@ -517,6 +675,7 @@
             let plays = [];
             let signals = [];
             let playLogs = { tabo: [], momentum: [], bounce: [], divergence: [] };
+            let screenshots = [];
 
             let isRunning = true;
             let intervalId = null;
@@ -534,8 +693,10 @@
             let prevResistance = 0,
                 prevSupport = 0,
                 prevEma = 0,
-                prevAlma = 0;
+                prevAlma = 0,
+                prevRsi = 0;
             let chartInitialized = false;
+            let screenshotCounter = 0;
 
             // --- Generate OHLC data ---
             function generateOHLC(prevClose) {
@@ -846,11 +1007,83 @@
                 return plays;
             }
 
-            // --- Update key levels display (below chart) ---
+            // --- Take Screenshot ---
+            function takeScreenshot(playData, divergenceData) {
+                try {
+                    // Get the canvas as image
+                    const dataUrl = canvas.toDataURL('image/png');
+
+                    // Build screenshot data
+                    const screenshot = {
+                        image: dataUrl,
+                        timestamp: new Date().toLocaleString(),
+                        play: {
+                            type: playData.type,
+                            direction: playData.direction,
+                            price: playData.price,
+                            rsi: playData.rsi || '--',
+                            level: playData.level || '--',
+                            ema: playData.ema || '--',
+                            alma: playData.alma || '--',
+                            reason: playData.reason || '--'
+                        },
+                        divergence: divergenceData ? {
+                            type: divergenceData.type,
+                            pattern: divergenceData.type === 'bullish' ? 'Right Hand (Bullish)' : 'Left Hand (Bearish)',
+                            price1: divergenceData.price1,
+                            price2: divergenceData.price2,
+                            rsi1: divergenceData.rsi1,
+                            rsi2: divergenceData.rsi2
+                        } : null
+                    };
+
+                    screenshots.push(screenshot);
+                    screenshotCounter++;
+                    screenshotCountEl.textContent = '📸 ' + screenshotCounter;
+
+                    // Show in modal
+                    showScreenshot(screenshot);
+
+                    debugEl.textContent = '📸 Screenshot captured at ' + new Date().toLocaleTimeString();
+
+                } catch (e) {
+                    console.error('Screenshot error:', e);
+                    debugEl.textContent = '❌ Screenshot failed: ' + e.message;
+                }
+            }
+
+            // --- Show Screenshot in Modal ---
+            function showScreenshot(screenshot) {
+                screenshotImage.src = screenshot.image;
+                screenshotPlay.textContent = `${screenshot.play.type.toUpperCase()} — ${screenshot.play.direction.toUpperCase()} @ $${screenshot.play.price.toFixed(2)}`;
+
+                if (screenshot.divergence) {
+                    const pattern = screenshot.divergence.pattern;
+                    const isBullish = screenshot.divergence.type === 'bullish';
+                    screenshotPattern.innerHTML = `
+                        ${isBullish ? '🖐️ <span style="color:#22c55e;">RIGHT HAND (Bullish)</span>' : '🖐️ <span style="color:#ef4444;">LEFT HAND (Bearish)</span>'}
+                        <span style="color:#64748b;font-size:10px;margin-left:8px;">
+                            Price: $${screenshot.divergence.price1.toFixed(2)} → $${screenshot.divergence.price2.toFixed(2)} |
+                            RSI: ${screenshot.divergence.rsi1.toFixed(0)} → ${screenshot.divergence.rsi2.toFixed(0)}
+                        </span>
+                    `;
+                    screenshotSignal.innerHTML = isBullish ?
+                        '🟢 <span style="color:#22c55e;">BUY Signal — Bullish Divergence Confirmed</span>' :
+                        '🔴 <span style="color:#ef4444;">SELL Signal — Bearish Divergence Confirmed</span>';
+                } else {
+                    screenshotPattern.textContent = '⚠️ No divergence detected (Convergence)';
+                    screenshotSignal.textContent = '📊 Trend following — No divergence signal';
+                }
+
+                screenshotDetails.textContent = screenshot.play.reason;
+
+                modal.classList.add('active');
+            }
+
+            // --- Update key levels display ---
             function updateKeyLevelsDisplay() {
                 const lastIdx = prices.length - 1;
 
-                // Update Resistance
                 if (resistance) {
                     const change = prevResistance ? ((resistance - prevResistance) / prevResistance * 100) : 0;
                     const arrow = change > 0 ? '↑' : change < 0 ? '↓' : '→';
@@ -861,7 +1094,6 @@
                     resistanceDisplay.textContent = '--';
                 }
 
-                // Update Support
                 if (support) {
                     const change = prevSupport ? ((support - prevSupport) / prevSupport * 100) : 0;
                     const arrow = change > 0 ? '↑' : change < 0 ? '↓' : '→';
@@ -872,7 +1104,6 @@
                     supportDisplay.textContent = '--';
                 }
 
-                // Update EMA
                 if (emaVals[lastIdx]) {
                     const ema = emaVals[lastIdx];
                     const change = prevEma ? ((ema - prevEma) / prevEma * 100) : 0;
@@ -884,7 +1115,6 @@
                     emaDisplay.textContent = '--';
                 }
 
-                // Update ALMA
                 if (almaVals[lastIdx]) {
                     const alma = almaVals[lastIdx];
                     const change = prevAlma ? ((alma - prevAlma) / prevAlma * 100) : 0;
@@ -894,6 +1124,42 @@
                     prevAlma = alma;
                 } else {
                     almaDisplay.textContent = '--';
+                }
+
+                const lastRsi = rsiVals[lastIdx];
+                if (lastRsi !== null && lastRsi !== undefined) {
+                    const change = prevRsi ? ((lastRsi - prevRsi) / prevRsi * 100) : 0;
+                    const arrow = change > 0 ? '↑' : change < 0 ? '↓' : '→';
+                    const color = change > 0 ? 'up' : change < 0 ? 'down' : '';
+
+                    let status = 'neutral';
+                    let statusText2 = 'NEUTRAL';
+                    let dotColor = 'neutral';
+                    if (lastRsi >= 70) { status = 'overbought';
+                        statusText2 = 'OVERBOUGHT';
+                        dotColor = 'bearish'; } else if (lastRsi <= 30) { status = 'oversold';
+                        statusText2 = 'OVERSOLD';
+                        dotColor = 'bullish'; }
+
+                    rsiDisplay.innerHTML = `
+                        ${lastRsi.toFixed(1)}
+                        <span class="rsi-status ${status}">${statusText2}</span>
+                        <span class="change ${color}">${arrow} ${Math.abs(change).toFixed(2)}%</span>
+                    `;
+
+                    rsiDot.className = `rsi-dot ${dotColor}`;
+                    const statusLabels = { 'overbought': 'Overbought (Bearish)', 'oversold': 'Oversold (Bullish)',
+                        'neutral': 'Neutral' };
+                    rsiStatusText.textContent = `RSI: ${lastRsi.toFixed(1)} (${statusLabels[status] || 'Neutral'})`;
+                    rsiStatusText.style.color = status === 'overbought' ? '#ef4444' :
+                        status === 'oversold' ? '#22c55e' : '#fbbf24';
+
+                    prevRsi = lastRsi;
+                } else {
+                    rsiDisplay.innerHTML = `-- <span class="rsi-status neutral">NEUTRAL</span>`;
+                    rsiDot.className = 'rsi-dot neutral';
+                    rsiStatusText.textContent = 'RSI: -- (Neutral)';
+                    rsiStatusText.style.color = '#fbbf24';
                 }
             }
 
@@ -913,6 +1179,7 @@
                                 <span class="play-direction ${p.direction}">${p.direction.toUpperCase()}</span>
                                 <span class="play-price">@ $${p.price.toFixed(2)}</span>
                                 <span class="play-time">${p.time || 'just now'}</span>
+                                ${p.screenshot ? ' 📸' : ''}
                             </div>
                             <div class="play-detail">${p.reason}</div>
                         </div>
@@ -928,6 +1195,7 @@
                                 <span class="play-direction ${p.direction}">${p.direction.toUpperCase()}</span>
                                 <span class="play-price">@ $${p.price.toFixed(2)}</span>
                                 <span class="play-time">${p.time || 'just now'}</span>
+                                ${p.screenshot ? ' 📸' : ''}
                             </div>
                             <div class="play-detail">${p.reason}</div>
                         </div>
@@ -943,6 +1211,7 @@
                                 <span class="play-direction ${p.direction}">${p.direction.toUpperCase()}</span>
                                 <span class="play-price">@ $${p.price.toFixed(2)}</span>
                                 <span class="play-time">${p.time || 'just now'}</span>
+                                ${p.screenshot ? ' 📸' : ''}
                             </div>
                             <div class="play-detail">${p.reason}</div>
                         </div>
@@ -1144,7 +1413,6 @@
                     const isBullish = close > open;
                     const color = isBullish ? '#22c55e' : '#ef4444';
 
-                    // Wick
                     ctx.strokeStyle = color;
                     ctx.lineWidth = 1;
                     ctx.beginPath();
@@ -1152,7 +1420,6 @@
                     ctx.lineTo(x, yLow);
                     ctx.stroke();
 
-                    // Body
                     const bodyTop = Math.min(yOpen, yClose);
                     const bodyBottom = Math.max(yOpen, yClose);
                     const bodyHeight = Math.max(1, bodyBottom - bodyTop);
@@ -1261,7 +1528,6 @@
                     ctx.fillText('$' + price.toFixed(0), pad.left - 4, y + 3);
                 }
 
-                // RSI Y-axis
                 ctx.textAlign = 'left';
                 ctx.fillStyle = '#475569';
                 for (let i = 0; i <= 4; i++) {
@@ -1274,7 +1540,6 @@
                 debugEl.textContent = '✅ Running | Bars: ' + len + ' | Price: $' + lastPrice.toFixed(2) + ' | RSI: ' + (lastRsi !==
                     null && lastRsi !== undefined ? lastRsi.toFixed(0) : '--');
 
-                // Update key levels below chart
                 updateKeyLevelsDisplay();
             }
 
@@ -1289,6 +1554,9 @@
 
                 const newPlays = detectPlays(prices, rsiVals, emaVals, almaVals);
 
+                // Check for divergences to include in screenshot
+                const divergences = detectDivergences(prices, rsiVals);
+
                 newPlays.forEach(p => {
                     const signalType = p.direction === 'long' ? 'buy' : 'sell';
                     signals.push({ idx: prices.length - 1, type: signalType, play: p });
@@ -1296,13 +1564,30 @@
 
                     const logEntry = { ...p, time: new Date().toLocaleTimeString() };
 
+                    // Find matching divergence for this play
+                    let matchingDivergence = null;
+                    if (p.type === 'bounce' && p.divData) {
+                        matchingDivergence = p.divData;
+                    } else {
+                        // Check if there's a divergence near this play
+                        const lastDiv = divergences[divergences.length - 1];
+                        if (lastDiv && Math.abs(lastDiv.idx2 - prices.length + 1) < 3) {
+                            matchingDivergence = lastDiv;
+                        }
+                    }
+
+                    // Take screenshot with play and divergence info
+                    takeScreenshot(p, matchingDivergence);
+
+                    // Mark log entry with screenshot
+                    logEntry.screenshot = true;
+
                     if (p.type === 'tabo') { playLogs.tabo.push(logEntry);
                         taboPlays++; } else if (p.type === 'momentum') { playLogs.momentum.push(logEntry);
                         momentumPlays++; } else if (p.type === 'bounce') { playLogs.bounce.push(logEntry);
                         bouncePlays++; }
                 });
 
-                const divergences = detectDivergences(prices, rsiVals);
                 divergencePlays = divergences.length;
 
                 if (divergences.length > 0) {
@@ -1356,6 +1641,9 @@
                             <div style="font-size:10px;color:#22c55e;margin-top:4px;border-top:1px solid #1a2332;padding-top:4px;">
                                 📝 ${latest.reason}
                             </div>
+                            <div style="font-size:10px;color:#8b5cf6;margin-top:4px;">
+                                📸 Screenshot captured!
+                            </div>
                         </div>
                     `;
 
@@ -1377,12 +1665,8 @@
                 }
 
                 const levels = findLevels(prices, 5);
-                if (levels.resistance) {
-                    resistance = levels.resistance;
-                }
-                if (levels.support) {
-                    support = levels.support;
-                }
+                if (levels.resistance) { resistance = levels.resistance; }
+                if (levels.support) { support = levels.support; }
 
                 const lastIdx = prices.length - 1;
                 barCountEl.textContent = 'Bars: ' + prices.length;
@@ -1466,15 +1750,19 @@
                 plays = [];
                 signals = [];
                 playLogs = { tabo: [], momentum: [], bounce: [], divergence: [] };
+                screenshots = [];
                 taboPlays = 0;
                 momentumPlays = 0;
                 bouncePlays = 0;
                 divergencePlays = 0;
                 barCounter = 0;
+                screenshotCounter = 0;
+                screenshotCountEl.textContent = '📸 0';
                 prevResistance = 0;
                 prevSupport = 0;
                 prevEma = 0;
                 prevAlma = 0;
+                prevRsi = 0;
 
                 for (let i = 0; i < 35; i++) {
                     const ohlc = generateOHLC(closes.length > 0 ? closes[closes.length - 1] : 100);
@@ -1522,6 +1810,34 @@
                 drawChart();
             }
 
+            function manualScreenshot() {
+                const lastPlay = plays[plays.length - 1];
+                if (lastPlay) {
+                    const divergences = detectDivergences(prices, rsiVals);
+                    const lastDiv = divergences[divergences.length - 1];
+                    takeScreenshot(lastPlay, lastDiv);
+                } else {
+                    // Take screenshot of current state with no play
+                    try {
+                        const dataUrl = canvas.toDataURL('image/png');
+                        const screenshot = {
+                            image: dataUrl,
+                            timestamp: new Date().toLocaleString(),
+                            play: { type: 'Manual', direction: '--', price: prices[prices.length - 1] || 0,
+                                reason: 'Manual screenshot' },
+                            divergence: null
+                        };
+                        screenshots.push(screenshot);
+                        screenshotCounter++;
+                        screenshotCountEl.textContent = '📸 ' + screenshotCounter;
+                        showScreenshot(screenshot);
+                        debugEl.textContent = '📸 Manual screenshot captured at ' + new Date().toLocaleTimeString();
+                    } catch (e) {
+                        console.error('Manual screenshot error:', e);
+                    }
+                }
+            }
+
             // --- Handle resize ---
             function handleResize() {
                 drawChart();
@@ -1529,7 +1845,6 @@
 
             // --- Initialize ---
             function init() {
-                // Seed initial data
                 for (let i = 0; i < 35; i++) {
                     const ohlc = generateOHLC(closes.length > 0 ? closes[closes.length - 1] : 100);
                     opens.push(ohlc.open);
@@ -1539,28 +1854,33 @@
                     prices.push(ohlc.close);
                 }
 
-                // Calculate initial indicators
                 rsiVals = calculateRSI(prices, 14);
                 emaVals = calculateEMA(prices, 9);
                 almaVals = calculateALMA(prices, 9, 6, 0.85);
 
-                // Draw initial chart
                 drawChart();
                 barCountEl.textContent = 'Bars: ' + prices.length;
                 debugEl.textContent = '✅ Initialized with ' + prices.length + ' bars';
 
-                // Event listeners
                 btnStart.addEventListener('click', toggleSimulation);
                 btnPause.addEventListener('click', pauseSimulation);
                 btnReset.addEventListener('click', resetSimulation);
                 btnSpeed.addEventListener('click', cycleSpeed);
                 btnLevels.addEventListener('click', toggleLevels);
                 btnStep.addEventListener('click', stepBar);
+                btnScreenshot.addEventListener('click', manualScreenshot);
 
-                // Handle resize
+                modalCloseBtn.addEventListener('click', function() {
+                    modal.classList.remove('active');
+                });
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        modal.classList.remove('active');
+                    }
+                });
+
                 window.addEventListener('resize', handleResize);
 
-                // Start automatically after a short delay
                 setTimeout(function() {
                     startSimulation();
                     setTimeout(function() {
@@ -1570,7 +1890,6 @@
                     }, 300);
                 }, 500);
 
-                // Toggle functionality for play type headers
                 document.querySelectorAll('.play-type-header').forEach(header => {
                     header.addEventListener('click', function() {
                         const targetId = this.dataset.target;
@@ -1585,18 +1904,16 @@
                     });
                 });
 
-                console.log('✅ GMMG Strategy Visualizer initialized!');
+                console.log('✅ GMMG Strategy Visualizer with Screenshots initialized!');
                 console.log('📊 Bars:', prices.length);
             }
 
-            // Run when DOM is ready
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', init);
             } else {
                 init();
             }
 
-            // Also run after a short delay to ensure canvas is ready
             setTimeout(function() {
                 if (!chartInitialized) {
                     drawChart();
