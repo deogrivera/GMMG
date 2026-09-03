@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GMMG Strategy Visualizer - FIXED</title>
+    <title>GMMG Strategy Visualizer - Key Levels Below Chart</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -80,6 +80,47 @@
             height: 100% !important;
             display: block;
         }
+
+        /* Key Levels Bar - positioned below chart */
+        .key-levels-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-top: 10px;
+            padding: 8px 12px;
+            background: #0f1729;
+            border-radius: 8px;
+            border: 1px solid #1a2332;
+        }
+        .key-level-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 4px 0;
+        }
+        .key-level-item .kl-label {
+            font-size: 9px;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .key-level-item .kl-value {
+            font-size: 14px;
+            font-weight: 700;
+            margin-top: 1px;
+        }
+        .key-level-item .kl-value.resistance { color: #ef4444; }
+        .key-level-item .kl-value.support { color: #22c55e; }
+        .key-level-item .kl-value.ema { color: #fbbf24; }
+        .key-level-item .kl-value.alma { color: #06b6d4; }
+        .key-level-item .kl-value .change {
+            font-size: 10px;
+            font-weight: 400;
+            margin-left: 4px;
+        }
+        .key-level-item .kl-value .change.up { color: #22c55e; }
+        .key-level-item .kl-value .change.down { color: #ef4444; }
+
         .pattern-box {
             padding: 10px 14px;
             border-radius: 8px;
@@ -142,15 +183,6 @@
         .stats-row .value.green { color: #22c55e; }
         .stats-row .value.red { color: #ef4444; }
         .stats-row .value.gold { color: #fbbf24; }
-        .level-line {
-            display: flex;
-            justify-content: space-between;
-            font-size: 11px;
-            padding: 2px 0;
-            color: #94a3b8;
-            border-bottom: 1px dashed #1a2332;
-        }
-        .level-line .level-val { font-weight: 600; color: #fbbf24; }
         .status-indicator {
             display: inline-block;
             width: 10px;
@@ -259,10 +291,13 @@
         @media (max-width: 1024px) {
             .grid-2 { grid-template-columns: 1fr; }
             .grid-3 { grid-template-columns: 1fr 1fr; }
+            .key-levels-bar { grid-template-columns: repeat(2, 1fr); }
         }
         @media (max-width: 600px) {
             .grid-3 { grid-template-columns: 1fr; }
             .legend-container { font-size: 8px; gap: 6px; }
+            .key-levels-bar { grid-template-columns: 1fr 1fr; gap: 4px; }
+            .key-level-item .kl-value { font-size: 12px; }
         }
     </style>
 </head>
@@ -290,6 +325,27 @@
                 <div class="chart-container">
                     <canvas id="mainChart"></canvas>
                 </div>
+
+                <!-- KEY LEVELS BAR - Positioned directly below chart -->
+                <div class="key-levels-bar">
+                    <div class="key-level-item">
+                        <span class="kl-label">🔴 Resistance</span>
+                        <span class="kl-value resistance" id="resistanceDisplay">--</span>
+                    </div>
+                    <div class="key-level-item">
+                        <span class="kl-label">🟢 Support</span>
+                        <span class="kl-value support" id="supportDisplay">--</span>
+                    </div>
+                    <div class="key-level-item">
+                        <span class="kl-label">🟡 EMA (9)</span>
+                        <span class="kl-value ema" id="emaDisplay">--</span>
+                    </div>
+                    <div class="key-level-item">
+                        <span class="kl-label">🔷 ALMA</span>
+                        <span class="kl-value alma" id="almaDisplay">--</span>
+                    </div>
+                </div>
+
                 <div class="legend-container">
                     <span class="legend-item"><span class="legend-color candle-green"></span> Bullish Candle</span>
                     <span class="legend-item"><span class="legend-color candle-red"></span> Bearish Candle</span>
@@ -364,16 +420,6 @@
                         </div>
                     </div>
                 </div>
-
-                <div style="margin-top:10px;padding-top:10px;border-top:1px solid #1a2332;">
-                    <div style="font-size:10px;color:#64748b;text-transform:uppercase;margin-bottom:4px;">🔑 Key Levels</div>
-                    <div id="keyLevels">
-                        <div class="level-line"><span>Resistance</span><span class="level-val" id="resistanceLevel">--</span></div>
-                        <div class="level-line"><span>Support</span><span class="level-val" id="supportLevel">--</span></div>
-                        <div class="level-line"><span>EMA (9)</span><span class="level-val" id="emaLevel">--</span></div>
-                        <div class="level-line"><span>ALMA</span><span class="level-val" id="almaLevel">--</span></div>
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -415,8 +461,8 @@
 
     <script>
         // ============================================================
-        //  GMMG STRATEGY VISUALIZER - COMPLETELY FIXED
-        //  Ensures chart renders immediately
+        //  GMMG STRATEGY VISUALIZER - Key Levels Below Chart
+        //  All key levels displayed in a clean bar under the chart
         // ============================================================
 
         (function() {
@@ -441,10 +487,11 @@
             const bounceList = document.getElementById('bounceList');
             const divergenceList = document.getElementById('divergenceList');
 
-            const resistanceLevel = document.getElementById('resistanceLevel');
-            const supportLevel = document.getElementById('supportLevel');
-            const emaLevel = document.getElementById('emaLevel');
-            const almaLevel = document.getElementById('almaLevel');
+            // Key Level displays (below chart)
+            const resistanceDisplay = document.getElementById('resistanceDisplay');
+            const supportDisplay = document.getElementById('supportDisplay');
+            const emaDisplay = document.getElementById('emaDisplay');
+            const almaDisplay = document.getElementById('almaDisplay');
 
             const statusIndicator = document.getElementById('statusIndicator');
             const statusText = document.getElementById('statusText');
@@ -484,6 +531,10 @@
                 divergencePlays = 0;
             let resistance = 0,
                 support = 0;
+            let prevResistance = 0,
+                prevSupport = 0,
+                prevEma = 0,
+                prevAlma = 0;
             let chartInitialized = false;
 
             // --- Generate OHLC data ---
@@ -793,6 +844,57 @@
                 }
 
                 return plays;
+            }
+
+            // --- Update key levels display (below chart) ---
+            function updateKeyLevelsDisplay() {
+                const lastIdx = prices.length - 1;
+
+                // Update Resistance
+                if (resistance) {
+                    const change = prevResistance ? ((resistance - prevResistance) / prevResistance * 100) : 0;
+                    const arrow = change > 0 ? '↑' : change < 0 ? '↓' : '→';
+                    const color = change > 0 ? 'up' : change < 0 ? 'down' : '';
+                    resistanceDisplay.innerHTML = `$${resistance.toFixed(2)} <span class="change ${color}">${arrow} ${Math.abs(change).toFixed(2)}%</span>`;
+                    prevResistance = resistance;
+                } else {
+                    resistanceDisplay.textContent = '--';
+                }
+
+                // Update Support
+                if (support) {
+                    const change = prevSupport ? ((support - prevSupport) / prevSupport * 100) : 0;
+                    const arrow = change > 0 ? '↑' : change < 0 ? '↓' : '→';
+                    const color = change > 0 ? 'up' : change < 0 ? 'down' : '';
+                    supportDisplay.innerHTML = `$${support.toFixed(2)} <span class="change ${color}">${arrow} ${Math.abs(change).toFixed(2)}%</span>`;
+                    prevSupport = support;
+                } else {
+                    supportDisplay.textContent = '--';
+                }
+
+                // Update EMA
+                if (emaVals[lastIdx]) {
+                    const ema = emaVals[lastIdx];
+                    const change = prevEma ? ((ema - prevEma) / prevEma * 100) : 0;
+                    const arrow = change > 0 ? '↑' : change < 0 ? '↓' : '→';
+                    const color = change > 0 ? 'up' : change < 0 ? 'down' : '';
+                    emaDisplay.innerHTML = `$${ema.toFixed(2)} <span class="change ${color}">${arrow} ${Math.abs(change).toFixed(2)}%</span>`;
+                    prevEma = ema;
+                } else {
+                    emaDisplay.textContent = '--';
+                }
+
+                // Update ALMA
+                if (almaVals[lastIdx]) {
+                    const alma = almaVals[lastIdx];
+                    const change = prevAlma ? ((alma - prevAlma) / prevAlma * 100) : 0;
+                    const arrow = change > 0 ? '↑' : change < 0 ? '↓' : '→';
+                    const color = change > 0 ? 'up' : change < 0 ? 'down' : '';
+                    almaDisplay.innerHTML = `$${alma.toFixed(2)} <span class="change ${color}">${arrow} ${Math.abs(change).toFixed(2)}%</span>`;
+                    prevAlma = alma;
+                } else {
+                    almaDisplay.textContent = '--';
+                }
             }
 
             // --- Update play logs UI ---
@@ -1171,6 +1273,9 @@
                 chartInitialized = true;
                 debugEl.textContent = '✅ Running | Bars: ' + len + ' | Price: $' + lastPrice.toFixed(2) + ' | RSI: ' + (lastRsi !==
                     null && lastRsi !== undefined ? lastRsi.toFixed(0) : '--');
+
+                // Update key levels below chart
+                updateKeyLevelsDisplay();
             }
 
             // --- Update data ---
@@ -1273,18 +1378,13 @@
 
                 const levels = findLevels(prices, 5);
                 if (levels.resistance) {
-                    resistanceLevel.textContent = '$' + levels.resistance.toFixed(2);
                     resistance = levels.resistance;
                 }
                 if (levels.support) {
-                    supportLevel.textContent = '$' + levels.support.toFixed(2);
                     support = levels.support;
                 }
 
                 const lastIdx = prices.length - 1;
-                if (emaVals[lastIdx]) emaLevel.textContent = '$' + emaVals[lastIdx].toFixed(2);
-                if (almaVals[lastIdx]) almaLevel.textContent = '$' + almaVals[lastIdx].toFixed(2);
-
                 barCountEl.textContent = 'Bars: ' + prices.length;
                 drawChart();
             }
@@ -1371,6 +1471,10 @@
                 bouncePlays = 0;
                 divergencePlays = 0;
                 barCounter = 0;
+                prevResistance = 0;
+                prevSupport = 0;
+                prevEma = 0;
+                prevAlma = 0;
 
                 for (let i = 0; i < 35; i++) {
                     const ohlc = generateOHLC(closes.length > 0 ? closes[closes.length - 1] : 100);
@@ -1459,13 +1563,27 @@
                 // Start automatically after a short delay
                 setTimeout(function() {
                     startSimulation();
-                    // Add a few bars to get things moving
                     setTimeout(function() {
                         addBar();
                         addBar();
                         addBar();
                     }, 300);
                 }, 500);
+
+                // Toggle functionality for play type headers
+                document.querySelectorAll('.play-type-header').forEach(header => {
+                    header.addEventListener('click', function() {
+                        const targetId = this.dataset.target;
+                        const target = document.getElementById(targetId);
+                        if (target) {
+                            target.classList.toggle('collapsed');
+                            const icon = this.querySelector('.toggle-icon');
+                            if (icon) {
+                                icon.textContent = target.classList.contains('collapsed') ? '▶' : '▼';
+                            }
+                        }
+                    });
+                });
 
                 console.log('✅ GMMG Strategy Visualizer initialized!');
                 console.log('📊 Bars:', prices.length);
