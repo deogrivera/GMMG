@@ -3,23 +3,16 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GMMG Strategy Visualizer - Candlesticks + Buy/Sell Signals</title>
+    <title>GMMG Strategy Visualizer - FIXED</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #0b1120;
             color: #e2e8f0;
             padding: 16px;
         }
-        .container {
-            max-width: 1500px;
-            margin: 0 auto;
-        }
+        .container { max-width: 1500px; margin: 0 auto; }
         header {
             background: #1a2332;
             padding: 14px 20px;
@@ -48,7 +41,7 @@
         }
         .grid-2 {
             display: grid;
-            grid-template-columns: 1fr 380px;
+            grid-template-columns: 1fr 420px;
             gap: 16px;
             margin-bottom: 16px;
         }
@@ -80,10 +73,12 @@
             background: #0f1729;
             border-radius: 8px;
             overflow: hidden;
+            min-height: 350px;
         }
         #mainChart {
             width: 100% !important;
             height: 100% !important;
+            display: block;
         }
         .pattern-box {
             padding: 10px 14px;
@@ -92,22 +87,10 @@
             font-size: 12px;
             border-left: 4px solid;
         }
-        .pattern-box.bullish {
-            background: #22c55e15;
-            border-color: #22c55e;
-        }
-        .pattern-box.bearish {
-            background: #ef444415;
-            border-color: #ef4444;
-        }
-        .pattern-box.neutral {
-            background: #fbbf2415;
-            border-color: #fbbf24;
-        }
-        .pattern-box .label {
-            font-weight: 700;
-            font-size: 13px;
-        }
+        .pattern-box.bullish { background: #22c55e15; border-color: #22c55e; }
+        .pattern-box.bearish { background: #ef444415; border-color: #ef4444; }
+        .pattern-box.neutral { background: #fbbf2415; border-color: #fbbf24; }
+        .pattern-box .label { font-weight: 700; font-size: 13px; }
         .signal-badge {
             display: inline-block;
             padding: 2px 10px;
@@ -116,21 +99,9 @@
             font-weight: 700;
             text-transform: uppercase;
         }
-        .signal-badge.buy {
-            background: #22c55e33;
-            color: #22c55e;
-            border: 1px solid #22c55e;
-        }
-        .signal-badge.sell {
-            background: #ef444433;
-            color: #ef4444;
-            border: 1px solid #ef4444;
-        }
-        .signal-badge.neutral {
-            background: #fbbf2433;
-            color: #fbbf24;
-            border: 1px solid #fbbf24;
-        }
+        .signal-badge.buy { background: #22c55e33; color: #22c55e; border: 1px solid #22c55e; }
+        .signal-badge.sell { background: #ef444433; color: #ef4444; border: 1px solid #ef4444; }
+        .signal-badge.neutral { background: #fbbf2433; color: #fbbf24; border: 1px solid #fbbf24; }
         .controls {
             display: flex;
             gap: 8px;
@@ -149,43 +120,15 @@
             border: 1px solid transparent;
             font-weight: 600;
         }
-        .controls button:hover {
-            background: #3b4a62;
-            border-color: #5a6f8a;
-            transform: scale(1.02);
-        }
-        .controls button:active {
-            transform: scale(0.95);
-        }
-        .controls button.primary {
-            background: #22c55e;
-            color: #fff;
-            border-color: #22c55e;
-        }
-        .controls button.primary:hover {
-            background: #16a34a;
-        }
-        .controls button.primary.running {
-            background: #fbbf24;
-            color: #0b1120;
-            border-color: #fbbf24;
-        }
-        .controls button.danger {
-            background: #ef4444;
-            color: #fff;
-            border-color: #ef4444;
-        }
-        .controls button.danger:hover {
-            background: #dc2626;
-        }
-        .controls button.secondary {
-            background: #3b4a62;
-            color: #e2e8f0;
-            border-color: #3b4a62;
-        }
-        .controls button.secondary:hover {
-            background: #4a5a72;
-        }
+        .controls button:hover { background: #3b4a62; border-color: #5a6f8a; transform: scale(1.02); }
+        .controls button:active { transform: scale(0.95); }
+        .controls button.primary { background: #22c55e; color: #fff; border-color: #22c55e; }
+        .controls button.primary:hover { background: #16a34a; }
+        .controls button.primary.running { background: #fbbf24; color: #0b1120; border-color: #fbbf24; }
+        .controls button.danger { background: #ef4444; color: #fff; border-color: #ef4444; }
+        .controls button.danger:hover { background: #dc2626; }
+        .controls button.secondary { background: #3b4a62; color: #e2e8f0; border-color: #3b4a62; }
+        .controls button.secondary:hover { background: #4a5a72; }
         .stats-row {
             display: flex;
             justify-content: space-between;
@@ -193,24 +136,12 @@
             font-size: 12px;
             border-bottom: 1px solid #0f1729;
         }
-        .stats-row:last-child {
-            border-bottom: none;
-        }
-        .stats-row .label {
-            color: #94a3b8;
-        }
-        .stats-row .value {
-            font-weight: 600;
-        }
-        .stats-row .value.green {
-            color: #22c55e;
-        }
-        .stats-row .value.red {
-            color: #ef4444;
-        }
-        .stats-row .value.gold {
-            color: #fbbf24;
-        }
+        .stats-row:last-child { border-bottom: none; }
+        .stats-row .label { color: #94a3b8; }
+        .stats-row .value { font-weight: 600; }
+        .stats-row .value.green { color: #22c55e; }
+        .stats-row .value.red { color: #ef4444; }
+        .stats-row .value.gold { color: #fbbf24; }
         .level-line {
             display: flex;
             justify-content: space-between;
@@ -219,10 +150,7 @@
             color: #94a3b8;
             border-bottom: 1px dashed #1a2332;
         }
-        .level-line .level-val {
-            font-weight: 600;
-            color: #fbbf24;
-        }
+        .level-line .level-val { font-weight: 600; color: #fbbf24; }
         .status-indicator {
             display: inline-block;
             width: 10px;
@@ -230,29 +158,13 @@
             border-radius: 50%;
             margin-right: 6px;
         }
-        .status-indicator.running {
-            background: #22c55e;
-            animation: pulse 1s infinite;
-        }
-        .status-indicator.paused {
-            background: #fbbf24;
-        }
-        .status-indicator.stopped {
-            background: #ef4444;
-        }
+        .status-indicator.running { background: #22c55e; animation: pulse 1s infinite; }
+        .status-indicator.paused { background: #fbbf24; }
+        .status-indicator.stopped { background: #ef4444; }
         @keyframes pulse {
-            0% {
-                opacity: 1;
-                transform: scale(1);
-            }
-            50% {
-                opacity: 0.4;
-                transform: scale(0.8);
-            }
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
         }
         .footnote {
             margin-top: 12px;
@@ -262,11 +174,7 @@
             border-top: 1px solid #1a2332;
             padding-top: 12px;
         }
-        .bar-counter {
-            font-size: 11px;
-            color: #64748b;
-            margin-left: 8px;
-        }
+        .bar-counter { font-size: 11px; color: #64748b; margin-left: 8px; }
         #debug {
             font-size: 11px;
             color: #22c55e;
@@ -275,11 +183,9 @@
             background: #0f1729;
             padding: 4px 10px;
             border-radius: 4px;
+            min-height: 24px;
         }
-        .status-text {
-            font-size: 12px;
-            color: #94a3b8;
-        }
+        .status-text { font-size: 12px; color: #94a3b8; }
         .legend-container {
             display: flex;
             flex-wrap: wrap;
@@ -287,83 +193,76 @@
             padding: 6px 0;
             font-size: 10px;
         }
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
+        .legend-item { display: flex; align-items: center; gap: 4px; }
         .legend-color {
             width: 16px;
             height: 3px;
             border-radius: 2px;
         }
-        .legend-color.candle-green {
-            background: #22c55e;
+        .legend-color.candle-green { background: #22c55e; }
+        .legend-color.candle-red { background: #ef4444; }
+        .legend-color.ema { background: #fbbf24; border-top: 2px dashed #fbbf24; height: 0; }
+        .legend-color.alma { background: #06b6d4; border-top: 2px dashed #06b6d4; height: 0; }
+        .legend-color.rsi { background: #8b5cf6; }
+        .legend-color.rsi70 { background: #ef444444; border-top: 1px dashed #ef4444; height: 0; }
+        .legend-color.rsi30 { background: #22c55e44; border-top: 1px dashed #22c55e; height: 0; }
+        .legend-color.support { background: #22c55e66; border-top: 1px dashed #22c55e; height: 0; }
+        .legend-color.resistance { background: #ef444466; border-top: 1px dashed #ef4444; height: 0; }
+        .legend-color.buy-signal { background: #22c55e; width: 10px; height: 10px; border-radius: 50%; }
+        .legend-color.sell-signal { background: #ef4444; width: 10px; height: 10px; border-radius: 50%; }
+
+        .play-log-container { max-height: 200px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #253141 transparent; }
+        .play-log-container::-webkit-scrollbar { width: 4px; }
+        .play-log-container::-webkit-scrollbar-track { background: transparent; }
+        .play-log-container::-webkit-scrollbar-thumb { background: #253141; border-radius: 4px; }
+
+        .play-log-entry {
+            background: #0f1729;
+            border-radius: 6px;
+            padding: 6px 10px;
+            margin-bottom: 4px;
+            font-size: 11px;
+            border-left: 3px solid;
+            font-family: monospace;
         }
-        .legend-color.candle-red {
-            background: #ef4444;
+        .play-log-entry.bullish { border-color: #22c55e; }
+        .play-log-entry.bearish { border-color: #ef4444; }
+        .play-log-entry .play-time { color: #64748b; font-size: 9px; }
+        .play-log-entry .play-detail { color: #cbd5e1; margin-top: 2px; font-size: 10px; }
+        .play-log-entry .play-price { color: #fbbf24; font-weight: 600; }
+        .play-log-entry .play-direction { font-weight: 700; }
+        .play-log-entry .play-direction.long { color: #22c55e; }
+        .play-log-entry .play-direction.short { color: #ef4444; }
+
+        .play-type-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 0;
+            border-bottom: 1px solid #1a2332;
+            margin-top: 6px;
+            cursor: pointer;
         }
-        .legend-color.ema {
-            background: #fbbf24;
-            border-top: 2px dashed #fbbf24;
-            height: 0;
+        .play-type-header:hover { background: #1a2332; border-radius: 4px; padding-left: 4px; }
+        .play-type-header .count-badge {
+            background: #253141;
+            padding: 1px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            color: #94a3b8;
         }
-        .legend-color.alma {
-            background: #06b6d4;
-            border-top: 2px dashed #06b6d4;
-            height: 0;
-        }
-        .legend-color.rsi {
-            background: #8b5cf6;
-        }
-        .legend-color.rsi70 {
-            background: #ef444444;
-            border-top: 1px dashed #ef4444;
-            height: 0;
-        }
-        .legend-color.rsi30 {
-            background: #22c55e44;
-            border-top: 1px dashed #22c55e;
-            height: 0;
-        }
-        .legend-color.support {
-            background: #22c55e66;
-            border-top: 1px dashed #22c55e;
-            height: 0;
-        }
-        .legend-color.resistance {
-            background: #ef444466;
-            border-top: 1px dashed #ef4444;
-            height: 0;
-        }
-        .legend-color.buy-signal {
-            background: #22c55e;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-        }
-        .legend-color.sell-signal {
-            background: #ef4444;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-        }
+        .play-type-header .toggle-icon { color: #64748b; font-size: 10px; margin-left: 6px; }
+        .play-list { margin-top: 4px; }
+        .play-list.collapsed { display: none; }
+        .no-plays { color: #475569; font-size: 10px; font-style: italic; padding: 4px 0; }
+
         @media (max-width: 1024px) {
-            .grid-2 {
-                grid-template-columns: 1fr;
-            }
-            .grid-3 {
-                grid-template-columns: 1fr 1fr;
-            }
+            .grid-2 { grid-template-columns: 1fr; }
+            .grid-3 { grid-template-columns: 1fr 1fr; }
         }
         @media (max-width: 600px) {
-            .grid-3 {
-                grid-template-columns: 1fr;
-            }
-            .legend-container {
-                font-size: 8px;
-                gap: 6px;
-            }
+            .grid-3 { grid-template-columns: 1fr; }
+            .legend-container { font-size: 8px; gap: 6px; }
         }
     </style>
 </head>
@@ -376,7 +275,7 @@
             <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
                 <span id="statusIndicator" class="status-indicator running"></span>
                 <span id="statusText" class="status-text">Running</span>
-                <span id="barCount" class="bar-counter">Bars: 35</span>
+                <span id="barCount" class="bar-counter">Bars: 0</span>
                 <span id="signalBadge" class="signal-badge neutral">⏳ Waiting</span>
             </div>
         </header>
@@ -391,7 +290,6 @@
                 <div class="chart-container">
                     <canvas id="mainChart"></canvas>
                 </div>
-                <!-- Legend -->
                 <div class="legend-container">
                     <span class="legend-item"><span class="legend-color candle-green"></span> Bullish Candle</span>
                     <span class="legend-item"><span class="legend-color candle-red"></span> Bearish Candle</span>
@@ -413,7 +311,7 @@
                     <button id="btnLevels" class="secondary">S/R: ON</button>
                     <button id="btnStep" class="secondary">⏭ Step</button>
                 </div>
-                <div id="debug">▶ Started - waiting for updates...</div>
+                <div id="debug">▶ Initializing...</div>
             </div>
 
             <!-- SIGNAL PANEL -->
@@ -423,7 +321,7 @@
                     <span id="playCount">0 plays</span>
                 </div>
 
-                <div id="playDisplay" style="min-height:140px;">
+                <div id="playDisplay" style="min-height:80px;">
                     <div class="pattern-box neutral">
                         <div class="label">⏳ Monitoring for setups...</div>
                         <div style="font-size:11px;color:#94a3b8;margin-top:4px;">
@@ -432,22 +330,38 @@
                     </div>
                 </div>
 
+                <!-- Detailed Play Logs -->
                 <div style="margin-top:10px;padding-top:10px;border-top:1px solid #1a2332;">
-                    <div class="stats-row">
-                        <span class="label">TABO Plays</span>
-                        <span class="value gold" id="taboCount">0</span>
-                    </div>
-                    <div class="stats-row">
-                        <span class="label">Momentum Plays</span>
-                        <span class="value gold" id="momentumCount">0</span>
-                    </div>
-                    <div class="stats-row">
-                        <span class="label">Bounce Plays</span>
-                        <span class="value gold" id="bounceCount">0</span>
-                    </div>
-                    <div class="stats-row">
-                        <span class="label">Divergences</span>
-                        <span class="value gold" id="divergenceCount">0</span>
+                    <div style="font-size:10px;color:#64748b;text-transform:uppercase;margin-bottom:4px;">📋 Play Logs</div>
+                    <div id="playLogs">
+                        <div>
+                            <div class="play-type-header" data-target="taboList">
+                                <span>🚀 TABO Plays <span class="count-badge" id="taboCountDisplay">0</span></span>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                            <div id="taboList" class="play-list"><div class="no-plays">No TABO plays yet</div></div>
+                        </div>
+                        <div>
+                            <div class="play-type-header" data-target="momentumList">
+                                <span>⚡ Momentum Plays <span class="count-badge" id="momentumCountDisplay">0</span></span>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                            <div id="momentumList" class="play-list"><div class="no-plays">No Momentum plays yet</div></div>
+                        </div>
+                        <div>
+                            <div class="play-type-header" data-target="bounceList">
+                                <span>🔄 Bounce Plays <span class="count-badge" id="bounceCountDisplay">0</span></span>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                            <div id="bounceList" class="play-list"><div class="no-plays">No Bounce plays yet</div></div>
+                        </div>
+                        <div>
+                            <div class="play-type-header" data-target="divergenceList">
+                                <span>📊 Divergences <span class="count-badge" id="divergenceCountDisplay">0</span></span>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                            <div id="divergenceList" class="play-list"><div class="no-plays">No Divergences yet</div></div>
+                        </div>
                     </div>
                 </div>
 
@@ -463,13 +377,12 @@
             </div>
         </div>
 
-        <!-- STRATEGY EXPLANATIONS -->
         <div class="grid-3">
             <div class="card">
                 <div class="card-header"><span>🚀 TABO Play</span></div>
                 <ul style="font-size:11px;line-height:1.7;color:#cbd5e1;padding-left:14px;">
                     <li><span style="color:#fbbf24;">●</span> <strong>Breakout</strong> above/below key level</li>
-                    <li><span style="color:#fbbf24;">●</span> Requires <strong>momentum</strong> (RSI > 60 or < 40)</li>
+                    <li><span style="color:#fbbf24;">●</span> Requires <strong>momentum</strong> (RSI > 55 or < 45)</li>
                     <li><span style="color:#22c55e;">✅ Entry:</span> On breakout candle close</li>
                     <li><span style="color:#ef4444;">⛔ Stop:</span> Below/above breakout level</li>
                 </ul>
@@ -502,896 +415,1077 @@
 
     <script>
         // ============================================================
-        //  GMMG STRATEGY VISUALIZER - CANDLESTICKS + BUY/SELL SIGNALS
-        //  Full legend and play-based trading signals
+        //  GMMG STRATEGY VISUALIZER - COMPLETELY FIXED
+        //  Ensures chart renders immediately
         // ============================================================
 
-        // --- DOM refs ---
-        const canvas = document.getElementById('mainChart');
-        const ctx = canvas.getContext('2d');
+        (function() {
+            'use strict';
 
-        const signalBadge = document.getElementById('signalBadge');
-        const currentPlay = document.getElementById('currentPlay');
-        const playDisplay = document.getElementById('playDisplay');
-        const playCount = document.getElementById('playCount');
-        const taboCount = document.getElementById('taboCount');
-        const momentumCount = document.getElementById('momentumCount');
-        const bounceCount = document.getElementById('bounceCount');
-        const divergenceCount = document.getElementById('divergenceCount');
+            // --- DOM refs ---
+            const canvas = document.getElementById('mainChart');
+            const ctx = canvas.getContext('2d');
 
-        const resistanceLevel = document.getElementById('resistanceLevel');
-        const supportLevel = document.getElementById('supportLevel');
-        const emaLevel = document.getElementById('emaLevel');
-        const almaLevel = document.getElementById('almaLevel');
+            const signalBadge = document.getElementById('signalBadge');
+            const currentPlay = document.getElementById('currentPlay');
+            const playDisplay = document.getElementById('playDisplay');
+            const playCount = document.getElementById('playCount');
 
-        const statusIndicator = document.getElementById('statusIndicator');
-        const statusText = document.getElementById('statusText');
-        const barCountEl = document.getElementById('barCount');
-        const debugEl = document.getElementById('debug');
+            const taboCountDisplay = document.getElementById('taboCountDisplay');
+            const momentumCountDisplay = document.getElementById('momentumCountDisplay');
+            const bounceCountDisplay = document.getElementById('bounceCountDisplay');
+            const divergenceCountDisplay = document.getElementById('divergenceCountDisplay');
 
-        const btnStart = document.getElementById('btnStart');
-        const btnPause = document.getElementById('btnPause');
-        const btnReset = document.getElementById('btnReset');
-        const btnSpeed = document.getElementById('btnSpeed');
-        const btnLevels = document.getElementById('btnLevels');
-        const btnStep = document.getElementById('btnStep');
+            const taboList = document.getElementById('taboList');
+            const momentumList = document.getElementById('momentumList');
+            const bounceList = document.getElementById('bounceList');
+            const divergenceList = document.getElementById('divergenceList');
 
-        // --- State ---
-        let prices = [];
-        let highs = [];
-        let lows = [];
-        let opens = [];
-        let closes = [];
-        let rsiVals = [];
-        let emaVals = [];
-        let almaVals = [];
-        let plays = [];
-        let signals = []; // {idx, type: 'buy'|'sell', play: {...}}
+            const resistanceLevel = document.getElementById('resistanceLevel');
+            const supportLevel = document.getElementById('supportLevel');
+            const emaLevel = document.getElementById('emaLevel');
+            const almaLevel = document.getElementById('almaLevel');
 
-        let isRunning = true;
-        let intervalId = null;
-        let speedFactor = 1;
-        let barCounter = 0;
-        let showLevels = true;
-        const MAX_BARS = 80;
+            const statusIndicator = document.getElementById('statusIndicator');
+            const statusText = document.getElementById('statusText');
+            const barCountEl = document.getElementById('barCount');
+            const debugEl = document.getElementById('debug');
 
-        let taboPlays = 0,
-            momentumPlays = 0,
-            bouncePlays = 0,
-            divergencePlays = 0;
-        let resistance = 0,
-            support = 0;
+            const btnStart = document.getElementById('btnStart');
+            const btnPause = document.getElementById('btnPause');
+            const btnReset = document.getElementById('btnReset');
+            const btnSpeed = document.getElementById('btnSpeed');
+            const btnLevels = document.getElementById('btnLevels');
+            const btnStep = document.getElementById('btnStep');
 
-        // --- Generate OHLC data ---
-        function generateOHLC(prevClose) {
-            if (prevClose === undefined || prevClose === null) {
-                const base = 100 + Math.random() * 6;
+            // --- State ---
+            let prices = [];
+            let highs = [];
+            let lows = [];
+            let opens = [];
+            let closes = [];
+            let rsiVals = [];
+            let emaVals = [];
+            let almaVals = [];
+            let plays = [];
+            let signals = [];
+            let playLogs = { tabo: [], momentum: [], bounce: [], divergence: [] };
+
+            let isRunning = true;
+            let intervalId = null;
+            let speedFactor = 1;
+            let barCounter = 0;
+            let showLevels = true;
+            const MAX_BARS = 80;
+
+            let taboPlays = 0,
+                momentumPlays = 0,
+                bouncePlays = 0,
+                divergencePlays = 0;
+            let resistance = 0,
+                support = 0;
+            let chartInitialized = false;
+
+            // --- Generate OHLC data ---
+            function generateOHLC(prevClose) {
+                if (prevClose === undefined || prevClose === null || isNaN(prevClose)) {
+                    const base = 100 + Math.random() * 6;
+                    return {
+                        open: base,
+                        high: base + Math.random() * 0.8,
+                        low: base - Math.random() * 0.8,
+                        close: base + (Math.random() - 0.5) * 0.6
+                    };
+                }
+
+                const trend = Math.sin(barCounter / 45) * 0.15 + Math.sin(barCounter / 22) * 0.06;
+                const noise = (Math.random() - 0.5) * 0.6;
+                const meanRevert = (100 - prevClose) * 0.003;
+
+                let close = prevClose + trend + noise + meanRevert;
+                if (Math.random() < 0.02) close += (Math.random() - 0.5) * 1.8;
+                if (Math.random() < 0.01) close += (Math.random() - 0.5) * 3.0;
+                close = Math.max(82, Math.min(118, close));
+
+                const range = Math.random() * 0.6 + 0.2;
+                const open = close + (Math.random() - 0.5) * range * 0.5;
+                const high = Math.max(open, close) + Math.random() * range * 0.6;
+                const low = Math.min(open, close) - Math.random() * range * 0.6;
+
                 return {
-                    open: base,
-                    high: base + Math.random() * 0.8,
-                    low: base - Math.random() * 0.8,
-                    close: base + (Math.random() - 0.5) * 0.6
+                    open: Math.max(82, Math.min(118, open)),
+                    high: Math.max(82, Math.min(118, high)),
+                    low: Math.max(82, Math.min(118, low)),
+                    close: Math.max(82, Math.min(118, close))
                 };
             }
 
-            const trend = Math.sin(barCounter / 45) * 0.15 + Math.sin(barCounter / 22) * 0.06;
-            const noise = (Math.random() - 0.5) * 0.6;
-            const meanRevert = (100 - prevClose) * 0.003;
-
-            let close = prevClose + trend + noise + meanRevert;
-            if (Math.random() < 0.02) close += (Math.random() - 0.5) * 1.8;
-            if (Math.random() < 0.01) close += (Math.random() - 0.5) * 3.0;
-            close = Math.max(82, Math.min(118, close));
-
-            const range = Math.random() * 0.6 + 0.2;
-            const open = close + (Math.random() - 0.5) * range * 0.5;
-            const high = Math.max(open, close) + Math.random() * range * 0.6;
-            const low = Math.min(open, close) - Math.random() * range * 0.6;
-
-            return {
-                open: Math.max(82, Math.min(118, open)),
-                high: Math.max(82, Math.min(118, high)),
-                low: Math.max(82, Math.min(118, low)),
-                close: Math.max(82, Math.min(118, close))
-            };
-        }
-
-        // --- Calculate RSI ---
-        function calculateRSI(data, period) {
-            period = period || 14;
-            const len = data.length;
-            if (len < period + 1) return Array(len).fill(null);
-            const rsi = [];
-            let gain = 0,
-                loss = 0;
-            for (let i = 1; i <= period; i++) {
-                const diff = data[i] - data[i - 1];
-                if (diff >= 0) gain += diff;
-                else loss += Math.abs(diff);
+            // --- Calculate RSI ---
+            function calculateRSI(data, period) {
+                period = period || 14;
+                const len = data.length;
+                if (len < period + 1) return Array(len).fill(null);
+                const rsi = [];
+                let gain = 0,
+                    loss = 0;
+                for (let i = 1; i <= period; i++) {
+                    const diff = data[i] - data[i - 1];
+                    if (diff >= 0) gain += diff;
+                    else loss += Math.abs(diff);
+                }
+                let avgGain = gain / period,
+                    avgLoss = loss / period;
+                rsi[period] = avgLoss === 0 ? 100 : 100 - (100 / (1 + avgGain / avgLoss));
+                for (let i = period + 1; i < len; i++) {
+                    const diff = data[i] - data[i - 1];
+                    if (diff >= 0) {
+                        avgGain = ((avgGain * (period - 1)) + diff) / period;
+                        avgLoss = ((avgLoss * (period - 1)) + 0) / period;
+                    } else {
+                        avgGain = ((avgGain * (period - 1)) + 0) / period;
+                        avgLoss = ((avgLoss * (period - 1)) + Math.abs(diff)) / period;
+                    }
+                    rsi[i] = avgLoss === 0 ? 100 : 100 - (100 / (1 + avgGain / avgLoss));
+                }
+                for (let i = 0; i <= period; i++) { if (!rsi[i]) rsi[i] = null; }
+                return rsi;
             }
-            let avgGain = gain / period,
-                avgLoss = loss / period;
-            rsi[period] = avgLoss === 0 ? 100 : 100 - (100 / (1 + avgGain / avgLoss));
-            for (let i = period + 1; i < len; i++) {
-                const diff = data[i] - data[i - 1];
-                if (diff >= 0) {
-                    avgGain = ((avgGain * (period - 1)) + diff) / period;
-                    avgLoss = ((avgLoss * (period - 1)) + 0) / period;
+
+            // --- Calculate EMA ---
+            function calculateEMA(data, period) {
+                period = period || 9;
+                const len = data.length;
+                if (len === 0) return [];
+                const ema = [];
+                const alpha = 2 / (period + 1);
+                for (let i = 0; i < len; i++) {
+                    if (i === 0) ema.push(data[i]);
+                    else ema.push(data[i] * alpha + ema[i - 1] * (1 - alpha));
+                }
+                return ema;
+            }
+
+            // --- Calculate ALMA ---
+            function calculateALMA(data, windowSize, sigma, offset) {
+                windowSize = windowSize || 9;
+                sigma = sigma || 6;
+                offset = offset || 0.85;
+                const len = data.length;
+                if (len < windowSize) return Array(len).fill(null);
+                const m = Math.floor(offset * (windowSize - 1));
+                const s = windowSize / sigma;
+                let weights = [];
+                for (let i = 0; i < windowSize; i++) {
+                    const x = i - m;
+                    const w = Math.exp(-(x * x) / (2 * s * s));
+                    weights.push(w);
+                }
+                const sumW = weights.reduce((a, b) => a + b, 0);
+                weights = weights.map(w => w / sumW);
+                const result = [];
+                for (let i = 0; i < len; i++) {
+                    if (i < windowSize - 1) { result.push(null); continue; }
+                    let sum = 0;
+                    for (let j = 0; j < windowSize; j++) {
+                        sum += data[i - j] * weights[windowSize - 1 - j];
+                    }
+                    result.push(sum);
+                }
+                return result;
+            }
+
+            // --- Find support/resistance ---
+            function findLevels(data, lookback) {
+                lookback = lookback || 5;
+                const len = data.length;
+                if (len < lookback * 2) return { resistance: null, support: null };
+
+                const highs = [],
+                    lows = [];
+                for (let i = lookback; i < len - lookback; i++) {
+                    let isHigh = true,
+                        isLow = true;
+                    for (let j = 1; j <= lookback; j++) {
+                        if (data[i] <= data[i - j] || data[i] <= data[i + j]) isHigh = false;
+                        if (data[i] >= data[i - j] || data[i] >= data[i + j]) isLow = false;
+                    }
+                    if (isHigh) highs.push(data[i]);
+                    if (isLow) lows.push(data[i]);
+                }
+
+                if (highs.length === 0 || lows.length === 0) return { resistance: null, support: null };
+
+                const avgHigh = highs.slice(-3).reduce((a, b) => a + b, 0) / Math.min(3, highs.length);
+                const avgLow = lows.slice(-3).reduce((a, b) => a + b, 0) / Math.min(3, lows.length);
+
+                return { resistance: avgHigh, support: avgLow };
+            }
+
+            // --- Detect divergences ---
+            function detectDivergences(priceData, rsiData) {
+                const len = priceData.length;
+                if (len < 20) return [];
+
+                const divergences = [];
+                const lookback = 3;
+
+                const pivots = { highs: [], lows: [] };
+                for (let i = lookback; i < len - lookback; i++) {
+                    let isHigh = true,
+                        isLow = true;
+                    for (let j = 1; j <= lookback; j++) {
+                        if (priceData[i] <= priceData[i - j] || priceData[i] <= priceData[i + j]) isHigh = false;
+                        if (priceData[i] >= priceData[i - j] || priceData[i] >= priceData[i + j]) isLow = false;
+                    }
+                    if (isHigh) pivots.highs.push({ idx: i, value: priceData[i] });
+                    if (isLow) pivots.lows.push({ idx: i, value: priceData[i] });
+                }
+
+                for (let i = 0; i < pivots.lows.length - 1; i++) {
+                    const p1 = pivots.lows[i],
+                        p2 = pivots.lows[i + 1];
+                    if (p2.value < p1.value && rsiData[p2.idx] !== null && rsiData[p1.idx] !== null) {
+                        if (rsiData[p2.idx] > rsiData[p1.idx]) {
+                            divergences.push({
+                                type: 'bullish',
+                                idx1: p1.idx,
+                                idx2: p2.idx,
+                                price1: p1.value,
+                                price2: p2.value,
+                                rsi1: rsiData[p1.idx],
+                                rsi2: rsiData[p2.idx]
+                            });
+                        }
+                    }
+                }
+
+                for (let i = 0; i < pivots.highs.length - 1; i++) {
+                    const p1 = pivots.highs[i],
+                        p2 = pivots.highs[i + 1];
+                    if (p2.value > p1.value && rsiData[p2.idx] !== null && rsiData[p1.idx] !== null) {
+                        if (rsiData[p2.idx] < rsiData[p1.idx]) {
+                            divergences.push({
+                                type: 'bearish',
+                                idx1: p1.idx,
+                                idx2: p2.idx,
+                                price1: p1.value,
+                                price2: p2.value,
+                                rsi1: rsiData[p1.idx],
+                                rsi2: rsiData[p2.idx]
+                            });
+                        }
+                    }
+                }
+
+                return divergences;
+            }
+
+            // --- Detect plays with detailed reasons ---
+            function detectPlays(priceData, rsiData, emaData, almaData) {
+                const len = priceData.length;
+                if (len < 15) return [];
+
+                const plays = [];
+                const idx = len - 1;
+                const price = priceData[idx];
+                const prevPrice = priceData[idx - 1] || price;
+                const rsi = rsiData[idx] || 50;
+                const ema = emaData[idx] || price;
+                const prevEma = emaData[idx - 1] || price;
+                const alma = almaData[idx] || price;
+                const prevAlma = almaData[idx - 1] || price;
+
+                const levels = findLevels(priceData, 5);
+                resistance = levels.resistance || price * 1.03;
+                support = levels.support || price * 0.97;
+
+                // --- TABO Play ---
+                if (resistance && price > resistance && prevPrice <= resistance) {
+                    if (rsi > 55) {
+                        plays.push({
+                            type: 'tabo',
+                            direction: 'long',
+                            price: price,
+                            level: resistance,
+                            rsi: rsi,
+                            reason: `Breakout ABOVE resistance at $${resistance.toFixed(2)} with RSI ${rsi.toFixed(0)} (momentum > 55)`
+                        });
+                    }
+                }
+                if (support && price < support && prevPrice >= support) {
+                    if (rsi < 45) {
+                        plays.push({
+                            type: 'tabo',
+                            direction: 'short',
+                            price: price,
+                            level: support,
+                            rsi: rsi,
+                            reason: `Breakout BELOW support at $${support.toFixed(2)} with RSI ${rsi.toFixed(0)} (momentum < 45)`
+                        });
+                    }
+                }
+
+                // --- Momentum Play ---
+                const isAboveEMA = price > ema;
+                const isAboveALMA = price > alma;
+                const wasAboveEMA = prevPrice > prevEma;
+                const wasAboveALMA = prevPrice > prevAlma;
+
+                if (!wasAboveEMA && isAboveEMA && !wasAboveALMA && isAboveALMA) {
+                    if (rsi > 45 && rsi < 65) {
+                        plays.push({
+                            type: 'momentum',
+                            direction: 'long',
+                            price: price,
+                            ema: ema,
+                            alma: alma,
+                            rsi: rsi,
+                            reason: `Bullish pullback to EMA $${ema.toFixed(2)} / ALMA $${alma.toFixed(2)} with RSI ${rsi.toFixed(0)} (neutral zone)`
+                        });
+                    }
+                }
+                if (wasAboveEMA && !isAboveEMA && wasAboveALMA && !isAboveALMA) {
+                    if (rsi > 35 && rsi < 55) {
+                        plays.push({
+                            type: 'momentum',
+                            direction: 'short',
+                            price: price,
+                            ema: ema,
+                            alma: alma,
+                            rsi: rsi,
+                            reason: `Bearish rejection from EMA $${ema.toFixed(2)} / ALMA $${alma.toFixed(2)} with RSI ${rsi.toFixed(0)} (neutral zone)`
+                        });
+                    }
+                }
+
+                // --- Bounce Play ---
+                if (support && Math.abs(price - support) / support < 0.008) {
+                    const bullishDivergence = detectDivergences(priceData, rsiData).filter(d => d.type === 'bullish');
+                    if (rsi < 40 && bullishDivergence.length > 0) {
+                        const div = bullishDivergence[bullishDivergence.length - 1];
+                        plays.push({
+                            type: 'bounce',
+                            direction: 'long',
+                            price: price,
+                            level: support,
+                            rsi: rsi,
+                            divType: 'bullish',
+                            divData: div,
+                            reason: `Bounce off SUPPORT at $${support.toFixed(2)} with RSI ${rsi.toFixed(0)} (oversold) + Bullish Divergence detected`
+                        });
+                    }
+                }
+                if (resistance && Math.abs(price - resistance) / resistance < 0.008) {
+                    const bearishDivergence = detectDivergences(priceData, rsiData).filter(d => d.type === 'bearish');
+                    if (rsi > 60 && bearishDivergence.length > 0) {
+                        const div = bearishDivergence[bearishDivergence.length - 1];
+                        plays.push({
+                            type: 'bounce',
+                            direction: 'short',
+                            price: price,
+                            level: resistance,
+                            rsi: rsi,
+                            divType: 'bearish',
+                            divData: div,
+                            reason: `Rejection from RESISTANCE at $${resistance.toFixed(2)} with RSI ${rsi.toFixed(0)} (overbought) + Bearish Divergence detected`
+                        });
+                    }
+                }
+
+                return plays;
+            }
+
+            // --- Update play logs UI ---
+            function updatePlayLogs() {
+                taboCountDisplay.textContent = taboPlays;
+                momentumCountDisplay.textContent = momentumPlays;
+                bounceCountDisplay.textContent = bouncePlays;
+                divergenceCountDisplay.textContent = divergencePlays;
+
+                if (playLogs.tabo.length === 0) {
+                    taboList.innerHTML = '<div class="no-plays">No TABO plays yet</div>';
                 } else {
-                    avgGain = ((avgGain * (period - 1)) + 0) / period;
-                    avgLoss = ((avgLoss * (period - 1)) + Math.abs(diff)) / period;
+                    taboList.innerHTML = playLogs.tabo.slice().reverse().map(p => `
+                        <div class="play-log-entry ${p.direction === 'long' ? 'bullish' : 'bearish'}">
+                            <div>
+                                <span class="play-direction ${p.direction}">${p.direction.toUpperCase()}</span>
+                                <span class="play-price">@ $${p.price.toFixed(2)}</span>
+                                <span class="play-time">${p.time || 'just now'}</span>
+                            </div>
+                            <div class="play-detail">${p.reason}</div>
+                        </div>
+                    `).join('');
                 }
-                rsi[i] = avgLoss === 0 ? 100 : 100 - (100 / (1 + avgGain / avgLoss));
-            }
-            for (let i = 0; i <= period; i++) { if (!rsi[i]) rsi[i] = null; }
-            return rsi;
-        }
 
-        // --- Calculate EMA ---
-        function calculateEMA(data, period) {
-            period = period || 9;
-            const len = data.length;
-            if (len === 0) return [];
-            const ema = [];
-            const alpha = 2 / (period + 1);
-            for (let i = 0; i < len; i++) {
-                if (i === 0) ema.push(data[i]);
-                else ema.push(data[i] * alpha + ema[i - 1] * (1 - alpha));
-            }
-            return ema;
-        }
-
-        // --- Calculate ALMA ---
-        function calculateALMA(data, windowSize, sigma, offset) {
-            windowSize = windowSize || 9;
-            sigma = sigma || 6;
-            offset = offset || 0.85;
-            const len = data.length;
-            if (len < windowSize) return Array(len).fill(null);
-            const m = Math.floor(offset * (windowSize - 1));
-            const s = windowSize / sigma;
-            let weights = [];
-            for (let i = 0; i < windowSize; i++) {
-                const x = i - m;
-                const w = Math.exp(-(x * x) / (2 * s * s));
-                weights.push(w);
-            }
-            const sumW = weights.reduce((a, b) => a + b, 0);
-            weights = weights.map(w => w / sumW);
-            const result = [];
-            for (let i = 0; i < len; i++) {
-                if (i < windowSize - 1) { result.push(null); continue; }
-                let sum = 0;
-                for (let j = 0; j < windowSize; j++) {
-                    sum += data[i - j] * weights[windowSize - 1 - j];
+                if (playLogs.momentum.length === 0) {
+                    momentumList.innerHTML = '<div class="no-plays">No Momentum plays yet</div>';
+                } else {
+                    momentumList.innerHTML = playLogs.momentum.slice().reverse().map(p => `
+                        <div class="play-log-entry ${p.direction === 'long' ? 'bullish' : 'bearish'}">
+                            <div>
+                                <span class="play-direction ${p.direction}">${p.direction.toUpperCase()}</span>
+                                <span class="play-price">@ $${p.price.toFixed(2)}</span>
+                                <span class="play-time">${p.time || 'just now'}</span>
+                            </div>
+                            <div class="play-detail">${p.reason}</div>
+                        </div>
+                    `).join('');
                 }
-                result.push(sum);
-            }
-            return result;
-        }
 
-        // --- Find support/resistance ---
-        function findLevels(data, lookback) {
-            lookback = lookback || 5;
-            const len = data.length;
-            if (len < lookback * 2) return { resistance: null, support: null };
-
-            const highs = [],
-                lows = [];
-            for (let i = lookback; i < len - lookback; i++) {
-                let isHigh = true,
-                    isLow = true;
-                for (let j = 1; j <= lookback; j++) {
-                    if (data[i] <= data[i - j] || data[i] <= data[i + j]) isHigh = false;
-                    if (data[i] >= data[i - j] || data[i] >= data[i + j]) isLow = false;
+                if (playLogs.bounce.length === 0) {
+                    bounceList.innerHTML = '<div class="no-plays">No Bounce plays yet</div>';
+                } else {
+                    bounceList.innerHTML = playLogs.bounce.slice().reverse().map(p => `
+                        <div class="play-log-entry ${p.direction === 'long' ? 'bullish' : 'bearish'}">
+                            <div>
+                                <span class="play-direction ${p.direction}">${p.direction.toUpperCase()}</span>
+                                <span class="play-price">@ $${p.price.toFixed(2)}</span>
+                                <span class="play-time">${p.time || 'just now'}</span>
+                            </div>
+                            <div class="play-detail">${p.reason}</div>
+                        </div>
+                    `).join('');
                 }
-                if (isHigh) highs.push(data[i]);
-                if (isLow) lows.push(data[i]);
-            }
 
-            if (highs.length === 0 || lows.length === 0) return { resistance: null, support: null };
-
-            const avgHigh = highs.slice(-3).reduce((a, b) => a + b, 0) / Math.min(3, highs.length);
-            const avgLow = lows.slice(-3).reduce((a, b) => a + b, 0) / Math.min(3, lows.length);
-
-            return { resistance: avgHigh, support: avgLow };
-        }
-
-        // --- Detect divergences ---
-        function detectDivergences(priceData, rsiData) {
-            const len = priceData.length;
-            if (len < 20) return [];
-
-            const divergences = [];
-            const lookback = 3;
-
-            const pivots = { highs: [], lows: [] };
-            for (let i = lookback; i < len - lookback; i++) {
-                let isHigh = true,
-                    isLow = true;
-                for (let j = 1; j <= lookback; j++) {
-                    if (priceData[i] <= priceData[i - j] || priceData[i] <= priceData[i + j]) isHigh = false;
-                    if (priceData[i] >= priceData[i - j] || priceData[i] >= priceData[i + j]) isLow = false;
-                }
-                if (isHigh) pivots.highs.push({ idx: i, value: priceData[i] });
-                if (isLow) pivots.lows.push({ idx: i, value: priceData[i] });
-            }
-
-            for (let i = 0; i < pivots.lows.length - 1; i++) {
-                const p1 = pivots.lows[i],
-                    p2 = pivots.lows[i + 1];
-                if (p2.value < p1.value && rsiData[p2.idx] !== null && rsiData[p1.idx] !== null) {
-                    if (rsiData[p2.idx] > rsiData[p1.idx]) {
-                        divergences.push({ type: 'bullish', idx1: p1.idx, idx2: p2.idx, price1: p1.value, price2: p2
-                                .value });
-                    }
+                if (playLogs.divergence.length === 0) {
+                    divergenceList.innerHTML = '<div class="no-plays">No Divergences yet</div>';
+                } else {
+                    divergenceList.innerHTML = playLogs.divergence.slice().reverse().map(p => `
+                        <div class="play-log-entry ${p.type === 'bullish' ? 'bullish' : 'bearish'}">
+                            <div>
+                                <span class="play-direction ${p.type === 'bullish' ? 'long' : 'short'}">${p.type.toUpperCase()}</span>
+                                <span class="play-price">Price: $${p.price1.toFixed(2)} → $${p.price2.toFixed(2)}</span>
+                                <span class="play-time">${p.time || 'just now'}</span>
+                            </div>
+                            <div class="play-detail">
+                                RSI: ${p.rsi1.toFixed(0)} → ${p.rsi2.toFixed(0)} · 
+                                ${p.type === 'bullish' ? 'Price lower low, RSI higher low' : 'Price higher high, RSI lower high'}
+                            </div>
+                        </div>
+                    `).join('');
                 }
             }
 
-            for (let i = 0; i < pivots.highs.length - 1; i++) {
-                const p1 = pivots.highs[i],
-                    p2 = pivots.highs[i + 1];
-                if (p2.value > p1.value && rsiData[p2.idx] !== null && rsiData[p1.idx] !== null) {
-                    if (rsiData[p2.idx] < rsiData[p1.idx]) {
-                        divergences.push({ type: 'bearish', idx1: p1.idx, idx2: p2.idx, price1: p1.value, price2: p2
-                                .value });
-                    }
+            // --- Draw chart with candlesticks ---
+            function drawChart() {
+                const rect = canvas.parentElement.getBoundingClientRect();
+                const W = canvas.parentElement.clientWidth || 800;
+                const H = canvas.parentElement.clientHeight || 350;
+
+                canvas.width = W;
+                canvas.height = H;
+
+                const pad = { top: 20, bottom: 20, left: 45, right: 45 };
+                const chartW = W - pad.left - pad.right;
+                const chartH = H - pad.top - pad.bottom;
+
+                ctx.clearRect(0, 0, W, H);
+
+                const len = prices.length;
+                if (len < 2) {
+                    ctx.fillStyle = '#64748b';
+                    ctx.font = '14px Segoe UI, sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('Loading data...', W / 2, H / 2);
+                    return;
                 }
-            }
 
-            return divergences;
-        }
+                const allPrices = [...prices];
+                const allRsi = rsiVals.filter(v => v !== null);
+                const minPrice = Math.max(80, Math.min(...allPrices) - 2);
+                const maxPrice = Math.min(120, Math.max(...allPrices) + 2);
+                const minRsi = 0;
+                const maxRsi = 100;
 
-        // --- Detect plays ---
-        function detectPlays(priceData, rsiData, emaData, almaData) {
-            const len = priceData.length;
-            if (len < 15) return [];
+                const priceRange = maxPrice - minPrice || 1;
+                const rsiRange = maxRsi - minRsi || 1;
 
-            const plays = [];
-            const idx = len - 1;
-            const price = priceData[idx];
-            const prevPrice = priceData[idx - 1] || price;
-            const rsi = rsiData[idx] || 50;
-            const ema = emaData[idx] || price;
-            const prevEma = emaData[idx - 1] || price;
-            const alma = almaData[idx] || price;
-            const prevAlma = almaData[idx - 1] || price;
-
-            const levels = findLevels(priceData, 5);
-            resistance = levels.resistance || price * 1.03;
-            support = levels.support || price * 0.97;
-
-            // TABO
-            if (resistance && price > resistance && prevPrice <= resistance) {
-                if (rsi > 55) {
-                    plays.push({ type: 'tabo', direction: 'long', price: price, level: resistance, rsi: rsi });
+                // Grid
+                ctx.strokeStyle = '#1a2332';
+                ctx.lineWidth = 0.5;
+                for (let i = 0; i < 10; i++) {
+                    const y = pad.top + (i / 10) * chartH;
+                    ctx.beginPath();
+                    ctx.moveTo(pad.left, y);
+                    ctx.lineTo(W - pad.right, y);
+                    ctx.stroke();
                 }
-            }
-            if (support && price < support && prevPrice >= support) {
-                if (rsi < 45) {
-                    plays.push({ type: 'tabo', direction: 'short', price: price, level: support, rsi: rsi });
-                }
-            }
 
-            // Momentum
-            const isAboveEMA = price > ema;
-            const isAboveALMA = price > alma;
-            const wasAboveEMA = prevPrice > prevEma;
-            const wasAboveALMA = prevPrice > prevAlma;
+                const getX = function(i) {
+                    return pad.left + (i / Math.max(len - 1, 1)) * chartW;
+                };
+                const getPriceY = function(val) {
+                    return pad.top + chartH - ((val - minPrice) / priceRange) * chartH;
+                };
+                const getRsiY = function(val) {
+                    return pad.top + chartH - ((val - minRsi) / rsiRange) * chartH;
+                };
 
-            if (!wasAboveEMA && isAboveEMA && !wasAboveALMA && isAboveALMA) {
-                if (rsi > 45 && rsi < 65) {
-                    plays.push({ type: 'momentum', direction: 'long', price: price, ema: ema, alma: alma });
-                }
-            }
-            if (wasAboveEMA && !isAboveEMA && wasAboveALMA && !isAboveALMA) {
-                if (rsi > 35 && rsi < 55) {
-                    plays.push({ type: 'momentum', direction: 'short', price: price, ema: ema, alma: alma });
-                }
-            }
+                // RSI 70/30
+                const rsi70Y = getRsiY(70);
+                const rsi30Y = getRsiY(30);
 
-            // Bounce
-            if (support && Math.abs(price - support) / support < 0.008) {
-                const bullishDivergence = detectDivergences(priceData, rsiData).filter(d => d.type === 'bullish');
-                if (rsi < 40 && bullishDivergence.length > 0) {
-                    plays.push({ type: 'bounce', direction: 'long', price: price, level: support });
-                }
-            }
-            if (resistance && Math.abs(price - resistance) / resistance < 0.008) {
-                const bearishDivergence = detectDivergences(priceData, rsiData).filter(d => d.type === 'bearish');
-                if (rsi > 60 && bearishDivergence.length > 0) {
-                    plays.push({ type: 'bounce', direction: 'short', price: price, level: resistance });
-                }
-            }
-
-            return plays;
-        }
-
-        // --- Draw chart with candlesticks ---
-        function drawChart() {
-            const rect = canvas.parentElement.getBoundingClientRect();
-            canvas.width = canvas.parentElement.clientWidth;
-            canvas.height = canvas.parentElement.clientHeight;
-
-            const W = canvas.width;
-            const H = canvas.height;
-            const pad = { top: 20, bottom: 20, left: 45, right: 45 };
-            const chartW = W - pad.left - pad.right;
-            const chartH = H - pad.top - pad.bottom;
-
-            ctx.clearRect(0, 0, W, H);
-
-            const len = prices.length;
-            if (len < 5) {
-                ctx.fillStyle = '#64748b';
-                ctx.font = '14px Segoe UI, sans-serif';
-                ctx.textAlign = 'center';
-                ctx.fillText('Loading data...', W / 2, H / 2);
-                return;
-            }
-
-            // Find min/max
-            const allPrices = [...prices];
-            const allRsi = rsiVals.filter(v => v !== null);
-            const minPrice = Math.max(80, Math.min(...allPrices) - 2);
-            const maxPrice = Math.min(120, Math.max(...allPrices) + 2);
-            const minRsi = 0;
-            const maxRsi = 100;
-
-            const priceRange = maxPrice - minPrice || 1;
-            const rsiRange = maxRsi - minRsi || 1;
-
-            // Draw grid
-            ctx.strokeStyle = '#1a2332';
-            ctx.lineWidth = 0.5;
-            for (let i = 0; i < 10; i++) {
-                const y = pad.top + (i / 10) * chartH;
+                ctx.strokeStyle = '#ef444444';
+                ctx.lineWidth = 1;
+                ctx.setLineDash([4, 4]);
                 ctx.beginPath();
-                ctx.moveTo(pad.left, y);
-                ctx.lineTo(W - pad.right, y);
-                ctx.stroke();
-            }
-
-            const getX = (i) => pad.left + (i / Math.max(len - 1, 1)) * chartW;
-            const getPriceY = (val) => pad.top + chartH - ((val - minPrice) / priceRange) * chartH;
-            const getRsiY = (val) => pad.top + chartH - ((val - minRsi) / rsiRange) * chartH;
-
-            // ---- Draw RSI 70 and 30 lines ----
-            const rsi70Y = getRsiY(70);
-            const rsi30Y = getRsiY(30);
-
-            ctx.strokeStyle = '#ef444444';
-            ctx.lineWidth = 1;
-            ctx.setLineDash([4, 4]);
-            ctx.beginPath();
-            ctx.moveTo(pad.left, rsi70Y);
-            ctx.lineTo(W - pad.right, rsi70Y);
-            ctx.stroke();
-            ctx.fillStyle = '#ef444466';
-            ctx.font = '8px Segoe UI, sans-serif';
-            ctx.setLineDash([]);
-            ctx.fillText('RSI 70', pad.left + 2, rsi70Y - 4);
-
-            ctx.strokeStyle = '#22c55e44';
-            ctx.beginPath();
-            ctx.moveTo(pad.left, rsi30Y);
-            ctx.lineTo(W - pad.right, rsi30Y);
-            ctx.stroke();
-            ctx.fillStyle = '#22c55e66';
-            ctx.fillText('RSI 30', pad.left + 2, rsi30Y - 4);
-
-            // ---- Draw Support/Resistance ----
-            if (showLevels && resistance && support) {
-                const resY = getPriceY(resistance);
-                const supY = getPriceY(support);
-
-                ctx.strokeStyle = '#ef444466';
-                ctx.lineWidth = 1.5;
-                ctx.setLineDash([6, 4]);
-                ctx.beginPath();
-                ctx.moveTo(pad.left, resY);
-                ctx.lineTo(W - pad.right, resY);
+                ctx.moveTo(pad.left, rsi70Y);
+                ctx.lineTo(W - pad.right, rsi70Y);
                 ctx.stroke();
                 ctx.fillStyle = '#ef444466';
-                ctx.font = '9px Segoe UI, sans-serif';
+                ctx.font = '8px Segoe UI, sans-serif';
                 ctx.setLineDash([]);
-                ctx.fillText('🔴 Resistance $' + resistance.toFixed(2), W - pad.right - 110, resY - 6);
+                ctx.fillText('RSI 70', pad.left + 2, rsi70Y - 4);
 
-                ctx.strokeStyle = '#22c55e66';
+                ctx.strokeStyle = '#22c55e44';
                 ctx.beginPath();
-                ctx.moveTo(pad.left, supY);
-                ctx.lineTo(W - pad.right, supY);
+                ctx.moveTo(pad.left, rsi30Y);
+                ctx.lineTo(W - pad.right, rsi30Y);
                 ctx.stroke();
                 ctx.fillStyle = '#22c55e66';
-                ctx.fillText('🟢 Support $' + support.toFixed(2), W - pad.right - 100, supY - 6);
-                ctx.setLineDash([]);
-            }
+                ctx.fillText('RSI 30', pad.left + 2, rsi30Y - 4);
 
-            // ---- Draw EMA ----
-            ctx.strokeStyle = '#fbbf2488';
-            ctx.lineWidth = 1.5;
-            ctx.setLineDash([4, 4]);
-            ctx.beginPath();
-            let emaStarted = false;
-            for (let i = 0; i < len; i++) {
-                if (emaVals[i] === null) continue;
-                const x = getX(i);
-                const y = getPriceY(emaVals[i]);
-                if (!emaStarted) { ctx.moveTo(x, y);
-                    emaStarted = true; } else ctx.lineTo(x, y);
-            }
-            ctx.stroke();
-            ctx.setLineDash([]);
+                // Support/Resistance
+                if (showLevels && resistance && support) {
+                    const resY = getPriceY(resistance);
+                    const supY = getPriceY(support);
 
-            // ---- Draw ALMA ----
-            ctx.strokeStyle = '#06b6d488';
-            ctx.lineWidth = 1.5;
-            ctx.setLineDash([4, 4]);
-            ctx.beginPath();
-            let almaStarted = false;
-            for (let i = 0; i < len; i++) {
-                if (almaVals[i] === null) continue;
-                const x = getX(i);
-                const y = getPriceY(almaVals[i]);
-                if (!almaStarted) { ctx.moveTo(x, y);
-                    almaStarted = true; } else ctx.lineTo(x, y);
-            }
-            ctx.stroke();
-            ctx.setLineDash([]);
+                    ctx.strokeStyle = '#ef444466';
+                    ctx.lineWidth = 1.5;
+                    ctx.setLineDash([6, 4]);
+                    ctx.beginPath();
+                    ctx.moveTo(pad.left, resY);
+                    ctx.lineTo(W - pad.right, resY);
+                    ctx.stroke();
+                    ctx.fillStyle = '#ef444466';
+                    ctx.font = '9px Segoe UI, sans-serif';
+                    ctx.setLineDash([]);
+                    ctx.fillText('🔴 Resistance $' + resistance.toFixed(2), W - pad.right - 110, resY - 6);
 
-            // ---- Draw RSI ----
-            ctx.strokeStyle = '#8b5cf6';
-            ctx.lineWidth = 1.5;
-            ctx.beginPath();
-            let rsiStarted = false;
-            for (let i = 0; i < len; i++) {
-                if (rsiVals[i] === null) continue;
-                const x = getX(i);
-                const y = getRsiY(rsiVals[i]);
-                if (!rsiStarted) { ctx.moveTo(x, y);
-                    rsiStarted = true; } else ctx.lineTo(x, y);
-            }
-            ctx.stroke();
+                    ctx.strokeStyle = '#22c55e66';
+                    ctx.beginPath();
+                    ctx.moveTo(pad.left, supY);
+                    ctx.lineTo(W - pad.right, supY);
+                    ctx.stroke();
+                    ctx.fillStyle = '#22c55e66';
+                    ctx.fillText('🟢 Support $' + support.toFixed(2), W - pad.right - 100, supY - 6);
+                    ctx.setLineDash([]);
+                }
 
-            // ---- Draw Candlesticks ----
-            const candleWidth = Math.min(6, chartW / len * 0.6);
+                // EMA
+                if (emaVals.length > 0) {
+                    ctx.strokeStyle = '#fbbf2488';
+                    ctx.lineWidth = 1.5;
+                    ctx.setLineDash([4, 4]);
+                    ctx.beginPath();
+                    let emaStarted = false;
+                    for (let i = 0; i < len; i++) {
+                        if (emaVals[i] === null || emaVals[i] === undefined) continue;
+                        const x = getX(i);
+                        const y = getPriceY(emaVals[i]);
+                        if (!emaStarted) { ctx.moveTo(x, y);
+                            emaStarted = true; } else ctx.lineTo(x, y);
+                    }
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
 
-            for (let i = 0; i < len; i++) {
-                if (i >= opens.length) continue;
+                // ALMA
+                if (almaVals.length > 0) {
+                    ctx.strokeStyle = '#06b6d488';
+                    ctx.lineWidth = 1.5;
+                    ctx.setLineDash([4, 4]);
+                    ctx.beginPath();
+                    let almaStarted = false;
+                    for (let i = 0; i < len; i++) {
+                        if (almaVals[i] === null || almaVals[i] === undefined) continue;
+                        const x = getX(i);
+                        const y = getPriceY(almaVals[i]);
+                        if (!almaStarted) { ctx.moveTo(x, y);
+                            almaStarted = true; } else ctx.lineTo(x, y);
+                    }
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
 
-                const x = getX(i);
-                const open = opens[i] || prices[i];
-                const high = highs[i] || prices[i];
-                const low = lows[i] || prices[i];
-                const close = closes[i] || prices[i];
+                // RSI
+                if (rsiVals.length > 0) {
+                    ctx.strokeStyle = '#8b5cf6';
+                    ctx.lineWidth = 1.5;
+                    ctx.beginPath();
+                    let rsiStarted = false;
+                    for (let i = 0; i < len; i++) {
+                        if (rsiVals[i] === null || rsiVals[i] === undefined) continue;
+                        const x = getX(i);
+                        const y = getRsiY(rsiVals[i]);
+                        if (!rsiStarted) { ctx.moveTo(x, y);
+                            rsiStarted = true; } else ctx.lineTo(x, y);
+                    }
+                    ctx.stroke();
+                }
 
-                const yOpen = getPriceY(open);
-                const yClose = getPriceY(close);
-                const yHigh = getPriceY(high);
-                const yLow = getPriceY(low);
+                // Candlesticks
+                const candleWidth = Math.min(6, chartW / len * 0.6);
 
-                const isBullish = close > open;
-                const color = isBullish ? '#22c55e' : '#ef4444';
+                for (let i = 0; i < len && i < opens.length; i++) {
+                    const x = getX(i);
+                    const open = opens[i] || prices[i];
+                    const high = highs[i] || prices[i];
+                    const low = lows[i] || prices[i];
+                    const close = closes[i] || prices[i];
 
-                // Wick
-                ctx.strokeStyle = color;
-                ctx.lineWidth = 1;
-                ctx.beginPath();
-                ctx.moveTo(x, yHigh);
-                ctx.lineTo(x, yLow);
-                ctx.stroke();
+                    const yOpen = getPriceY(open);
+                    const yClose = getPriceY(close);
+                    const yHigh = getPriceY(high);
+                    const yLow = getPriceY(low);
 
-                // Body
-                const bodyTop = Math.min(yOpen, yClose);
-                const bodyBottom = Math.max(yOpen, yClose);
-                const bodyHeight = Math.max(1, bodyBottom - bodyTop);
+                    const isBullish = close > open;
+                    const color = isBullish ? '#22c55e' : '#ef4444';
 
-                if (isBullish) {
+                    // Wick
+                    ctx.strokeStyle = color;
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(x, yHigh);
+                    ctx.lineTo(x, yLow);
+                    ctx.stroke();
+
+                    // Body
+                    const bodyTop = Math.min(yOpen, yClose);
+                    const bodyBottom = Math.max(yOpen, yClose);
+                    const bodyHeight = Math.max(1, bodyBottom - bodyTop);
+
                     ctx.fillStyle = color;
                     ctx.fillRect(x - candleWidth / 2, bodyTop, candleWidth, bodyHeight);
                     ctx.strokeStyle = color;
                     ctx.lineWidth = 0.5;
                     ctx.strokeRect(x - candleWidth / 2, bodyTop, candleWidth, bodyHeight);
-                } else {
-                    ctx.fillStyle = color;
-                    ctx.fillRect(x - candleWidth / 2, bodyTop, candleWidth, bodyHeight);
+                }
+
+                // Divergences
+                const divergences = detectDivergences(prices, rsiVals);
+                divergences.forEach(div => {
+                    if (div.idx1 < 0 || div.idx2 < 0 || div.idx1 >= len || div.idx2 >= len) return;
+
+                    const x1 = getX(div.idx1);
+                    const x2 = getX(div.idx2);
+                    const y1 = getPriceY(div.price1);
+                    const y2 = getPriceY(div.price2);
+
+                    const color = div.type === 'bullish' ? '#22c55e' : '#ef4444';
+                    const label = div.type === 'bullish' ? '⬆️ RH' : '⬇️ LH';
+
                     ctx.strokeStyle = color;
-                    ctx.lineWidth = 0.5;
-                    ctx.strokeRect(x - candleWidth / 2, bodyTop, candleWidth, bodyHeight);
+                    ctx.lineWidth = 2;
+                    ctx.setLineDash([5, 4]);
+                    ctx.beginPath();
+                    ctx.moveTo(x1, y1);
+                    ctx.lineTo(x2, y2);
+                    ctx.stroke();
+
+                    const midX = (x1 + x2) / 2;
+                    const midY = (y1 + y2) / 2 - 14;
+                    ctx.fillStyle = '#141d2b';
+                    ctx.fillRect(midX - 18, midY - 10, 36, 18);
+                    ctx.fillStyle = color;
+                    ctx.font = '10px Segoe UI, sans-serif';
+                    ctx.setLineDash([]);
+                    ctx.textAlign = 'center';
+                    ctx.fillText(label, midX, midY + 4);
+                    ctx.textAlign = 'left';
+                });
+
+                // Buy/Sell Signals
+                signals.forEach(signal => {
+                    if (signal.idx < 0 || signal.idx >= len) return;
+                    const x = getX(signal.idx);
+                    const y = getPriceY(prices[signal.idx]);
+
+                    const isBuy = signal.type === 'buy';
+                    const color = isBuy ? '#22c55e' : '#ef4444';
+                    const label = isBuy ? 'BUY' : 'SELL';
+
+                    ctx.save();
+                    ctx.fillStyle = color;
+                    ctx.font = 'bold 16px Segoe UI, sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(isBuy ? '▲' : '▼', x, y - 20);
+
+                    ctx.fillStyle = '#141d2bcc';
+                    const labelWidth = 30;
+                    ctx.fillRect(x - labelWidth / 2, y - 38, labelWidth, 16);
+                    ctx.fillStyle = color;
+                    ctx.font = 'bold 8px Segoe UI, sans-serif';
+                    ctx.fillText(label, x, y - 26);
+
+                    ctx.strokeStyle = color + '44';
+                    ctx.lineWidth = 1;
+                    ctx.setLineDash([2, 4]);
+                    ctx.beginPath();
+                    ctx.moveTo(x, getPriceY(maxPrice));
+                    ctx.lineTo(x, getPriceY(minPrice));
+                    ctx.stroke();
+
+                    ctx.restore();
+                    ctx.textAlign = 'left';
+                });
+
+                // Current price
+                const lastIdx = len - 1;
+                const lastPrice = prices[lastIdx];
+                const lastX = getX(lastIdx);
+                const lastY = getPriceY(lastPrice);
+                ctx.fillStyle = '#fbbf24';
+                ctx.font = 'bold 11px Segoe UI, sans-serif';
+                ctx.textAlign = 'left';
+                ctx.fillText('$' + lastPrice.toFixed(2), lastX + 4, lastY - 4);
+
+                // RSI label
+                const lastRsi = rsiVals[lastIdx];
+                if (lastRsi !== null && lastRsi !== undefined) {
+                    const rsiY = getRsiY(lastRsi);
+                    ctx.fillStyle = '#8b5cf6';
+                    ctx.font = '10px Segoe UI, sans-serif';
+                    ctx.fillText('RSI: ' + lastRsi.toFixed(0), pad.left + 4, rsiY - 4);
                 }
-            }
 
-            // ---- Draw Divergences ----
-            const divergences = detectDivergences(prices, rsiVals);
-            divergences.forEach(div => {
-                if (div.idx1 < 0 || div.idx2 < 0 || div.idx1 >= len || div.idx2 >= len) return;
+                // Y-axis labels
+                ctx.fillStyle = '#475569';
+                ctx.font = '8px Segoe UI, sans-serif';
+                ctx.textAlign = 'right';
+                for (let i = 0; i <= 4; i++) {
+                    const price = minPrice + (i / 4) * priceRange;
+                    const y = getPriceY(price);
+                    ctx.fillText('$' + price.toFixed(0), pad.left - 4, y + 3);
+                }
 
-                const x1 = getX(div.idx1);
-                const x2 = getX(div.idx2);
-                const y1 = getPriceY(div.price1);
-                const y2 = getPriceY(div.price2);
-
-                const color = div.type === 'bullish' ? '#22c55e' : '#ef4444';
-                const label = div.type === 'bullish' ? '⬆️ RH' : '⬇️ LH';
-
-                ctx.strokeStyle = color;
-                ctx.lineWidth = 2;
-                ctx.setLineDash([5, 4]);
-                ctx.beginPath();
-                ctx.moveTo(x1, y1);
-                ctx.lineTo(x2, y2);
-                ctx.stroke();
-
-                const midX = (x1 + x2) / 2;
-                const midY = (y1 + y2) / 2 - 14;
-                ctx.fillStyle = '#141d2b';
-                ctx.fillRect(midX - 18, midY - 10, 36, 18);
-                ctx.fillStyle = color;
-                ctx.font = '10px Segoe UI, sans-serif';
-                ctx.setLineDash([]);
-                ctx.textAlign = 'center';
-                ctx.fillText(label, midX, midY + 4);
+                // RSI Y-axis
                 ctx.textAlign = 'left';
-            });
+                ctx.fillStyle = '#475569';
+                for (let i = 0; i <= 4; i++) {
+                    const rsiVal = minRsi + (i / 4) * rsiRange;
+                    const y = getRsiY(rsiVal);
+                    ctx.fillText(rsiVal.toFixed(0), W - pad.right + 4, y + 3);
+                }
 
-            // ---- Draw Buy/Sell Signals ----
-            signals.forEach(signal => {
-                if (signal.idx < 0 || signal.idx >= len) return;
-                const x = getX(signal.idx);
-                const y = getPriceY(prices[signal.idx]);
-
-                const isBuy = signal.type === 'buy';
-                const color = isBuy ? '#22c55e' : '#ef4444';
-                const label = isBuy ? 'BUY' : 'SELL';
-
-                // Draw signal arrow
-                ctx.save();
-                ctx.fillStyle = color;
-                ctx.font = 'bold 16px Segoe UI, sans-serif';
-                ctx.textAlign = 'center';
-                ctx.fillText(isBuy ? '▲' : '▼', x, y - 20);
-
-                // Background for label
-                ctx.fillStyle = '#141d2bcc';
-                const labelWidth = 30;
-                ctx.fillRect(x - labelWidth / 2, y - 38, labelWidth, 16);
-                ctx.fillStyle = color;
-                ctx.font = 'bold 8px Segoe UI, sans-serif';
-                ctx.fillText(label, x, y - 26);
-
-                // Draw vertical line at signal
-                ctx.strokeStyle = color + '44';
-                ctx.lineWidth = 1;
-                ctx.setLineDash([2, 4]);
-                ctx.beginPath();
-                ctx.moveTo(x, getPriceY(maxPrice));
-                ctx.lineTo(x, getPriceY(minPrice));
-                ctx.stroke();
-
-                ctx.restore();
-                ctx.textAlign = 'left';
-            });
-
-            // ---- Current price label ----
-            const lastIdx = len - 1;
-            const lastPrice = prices[lastIdx];
-            const lastX = getX(lastIdx);
-            const lastY = getPriceY(lastPrice);
-            ctx.fillStyle = '#fbbf24';
-            ctx.font = 'bold 11px Segoe UI, sans-serif';
-            ctx.textAlign = 'left';
-            ctx.fillText('$' + lastPrice.toFixed(2), lastX + 4, lastY - 4);
-
-            // ---- RSI label ----
-            const lastRsi = rsiVals[lastIdx];
-            if (lastRsi !== null) {
-                const rsiY = getRsiY(lastRsi);
-                ctx.fillStyle = '#8b5cf6';
-                ctx.font = '10px Segoe UI, sans-serif';
-                ctx.fillText('RSI: ' + lastRsi.toFixed(0), pad.left + 4, rsiY - 4);
+                chartInitialized = true;
+                debugEl.textContent = '✅ Running | Bars: ' + len + ' | Price: $' + lastPrice.toFixed(2) + ' | RSI: ' + (lastRsi !==
+                    null && lastRsi !== undefined ? lastRsi.toFixed(0) : '--');
             }
 
-            // ---- Y-axis labels ----
-            ctx.fillStyle = '#475569';
-            ctx.font = '8px Segoe UI, sans-serif';
-            ctx.textAlign = 'right';
-            for (let i = 0; i <= 4; i++) {
-                const price = minPrice + (i / 4) * priceRange;
-                const y = getPriceY(price);
-                ctx.fillText('$' + price.toFixed(0), pad.left - 4, y + 3);
-            }
+            // --- Update data ---
+            function updateData() {
+                const len = prices.length;
+                if (len < 5) return;
 
-            // ---- RSI Y-axis labels ----
-            ctx.textAlign = 'left';
-            ctx.fillStyle = '#475569';
-            for (let i = 0; i <= 4; i++) {
-                const rsiVal = minRsi + (i / 4) * rsiRange;
-                const y = getRsiY(rsiVal);
-                ctx.fillText(rsiVal.toFixed(0), W - pad.right + 4, y + 3);
-            }
+                rsiVals = calculateRSI(prices, 14);
+                emaVals = calculateEMA(prices, 9);
+                almaVals = calculateALMA(prices, 9, 6, 0.85);
 
-            // ---- Update debug ----
-            debugEl.textContent = '✅ Running | Bars: ' + len + ' | Price: $' + lastPrice.toFixed(2) + ' | RSI: ' + (lastRsi !==
-                null ? lastRsi.toFixed(0) : '--');
-        }
+                const newPlays = detectPlays(prices, rsiVals, emaVals, almaVals);
 
-        // --- Update data ---
-        function updateData() {
-            const len = prices.length;
-            if (len < 15) return;
+                newPlays.forEach(p => {
+                    const signalType = p.direction === 'long' ? 'buy' : 'sell';
+                    signals.push({ idx: prices.length - 1, type: signalType, play: p });
+                    if (signals.length > 30) signals.shift();
 
-            rsiVals = calculateRSI(prices, 14);
-            emaVals = calculateEMA(prices, 9);
-            almaVals = calculateALMA(prices, 9, 6, 0.85);
+                    const logEntry = { ...p, time: new Date().toLocaleTimeString() };
 
-            const newPlays = detectPlays(prices, rsiVals, emaVals, almaVals);
+                    if (p.type === 'tabo') { playLogs.tabo.push(logEntry);
+                        taboPlays++; } else if (p.type === 'momentum') { playLogs.momentum.push(logEntry);
+                        momentumPlays++; } else if (p.type === 'bounce') { playLogs.bounce.push(logEntry);
+                        bouncePlays++; }
+                });
 
-            // Add signals for new plays
-            newPlays.forEach(p => {
-                if (p.direction === 'long') {
-                    signals.push({ idx: prices.length - 1, type: 'buy', play: p });
+                const divergences = detectDivergences(prices, rsiVals);
+                divergencePlays = divergences.length;
+
+                if (divergences.length > 0) {
+                    const latestDiv = divergences[divergences.length - 1];
+                    const exists = playLogs.divergence.some(d =>
+                        d.idx1 === latestDiv.idx1 && d.idx2 === latestDiv.idx2
+                    );
+                    if (!exists) {
+                        playLogs.divergence.push({
+                            type: latestDiv.type,
+                            price1: latestDiv.price1,
+                            price2: latestDiv.price2,
+                            rsi1: latestDiv.rsi1,
+                            rsi2: latestDiv.rsi2,
+                            idx1: latestDiv.idx1,
+                            idx2: latestDiv.idx2,
+                            time: new Date().toLocaleTimeString()
+                        });
+                        if (playLogs.divergence.length > 20) playLogs.divergence.shift();
+                    }
+                }
+
+                playCount.textContent = (taboPlays + momentumPlays + bouncePlays) + ' plays';
+                updatePlayLogs();
+
+                if (newPlays.length > 0) {
+                    const latest = newPlays[newPlays.length - 1];
+                    const emoji = latest.direction === 'long' ? '🟢' : '🔴';
+                    const label = latest.type.toUpperCase();
+                    currentPlay.textContent = `${emoji} ${label} ${latest.direction.toUpperCase()} @ $${latest.price.toFixed(2)}`;
+                    currentPlay.style.color = latest.direction === 'long' ? '#22c55e' : '#ef4444';
+
+                    signalBadge.textContent = `${emoji} ${label}`;
+                    signalBadge.className = `signal-badge ${latest.direction === 'long' ? 'buy' : 'sell'}`;
+
+                    let detail = '';
+                    if (latest.type === 'tabo') detail = `Breakout of $${latest.level.toFixed(2)} · RSI ${latest.rsi.toFixed(0)}`;
+                    else if (latest.type === 'momentum') detail =
+                        `Pullback to EMA $${latest.ema.toFixed(2)} / ALMA $${latest.alma.toFixed(2)}`;
+                    else if (latest.type === 'bounce') detail = `Bounce off $${latest.level.toFixed(2)} with divergence`;
+
+                    playDisplay.innerHTML = `
+                        <div class="pattern-box ${latest.direction === 'long' ? 'bullish' : 'bearish'}">
+                            <div class="label">${emoji} ${latest.type.toUpperCase()} — ${latest.direction.toUpperCase()}</div>
+                            <div style="font-size:11px;color:#94a3b8;margin-top:2px;">
+                                Entry: $${latest.price.toFixed(2)} · ${detail}
+                            </div>
+                            <div style="font-size:10px;color:#64748b;margin-top:4px;">
+                                ⚡ Confidence: ${latest.type === 'tabo' ? 'High' : latest.type === 'momentum' ? 'Medium' : 'High'}
+                            </div>
+                            <div style="font-size:10px;color:#22c55e;margin-top:4px;border-top:1px solid #1a2332;padding-top:4px;">
+                                📝 ${latest.reason}
+                            </div>
+                        </div>
+                    `;
+
+                    plays.push({ ...latest, timestamp: new Date() });
+                    if (plays.length > 50) plays.shift();
                 } else {
-                    signals.push({ idx: prices.length - 1, type: 'sell', play: p });
+                    currentPlay.textContent = '⏳ No play detected';
+                    currentPlay.style.color = '#fbbf24';
+                    signalBadge.textContent = '⏳ Monitoring';
+                    signalBadge.className = 'signal-badge neutral';
+                    playDisplay.innerHTML = `
+                        <div class="pattern-box neutral">
+                            <div class="label">⏳ Monitoring for setups...</div>
+                            <div style="font-size:11px;color:#94a3b8;margin-top:4px;">
+                                Watch for TABO breakouts, Momentum pullbacks, and Bounce plays
+                            </div>
+                        </div>
+                    `;
                 }
-                if (signals.length > 30) signals.shift();
-            });
 
-            newPlays.forEach(p => {
-                if (p.type === 'tabo') taboPlays++;
-                else if (p.type === 'momentum') momentumPlays++;
-                else if (p.type === 'bounce') bouncePlays++;
-            });
-
-            const divergences = detectDivergences(prices, rsiVals);
-            divergencePlays = divergences.length;
-
-            taboCount.textContent = taboPlays;
-            momentumCount.textContent = momentumPlays;
-            bounceCount.textContent = bouncePlays;
-            divergenceCount.textContent = divergencePlays;
-            playCount.textContent = (taboPlays + momentumPlays + bouncePlays) + ' plays';
-
-            if (newPlays.length > 0) {
-                const latest = newPlays[newPlays.length - 1];
-                const emoji = latest.direction === 'long' ? '🟢' : '🔴';
-                const label = latest.type.toUpperCase();
-                currentPlay.textContent = `${emoji} ${label} ${latest.direction.toUpperCase()} @ $${latest.price.toFixed(2)}`;
-                currentPlay.style.color = latest.direction === 'long' ? '#22c55e' : '#ef4444';
-
-                signalBadge.textContent = `${emoji} ${label}`;
-                signalBadge.className = `signal-badge ${latest.direction === 'long' ? 'buy' : 'sell'}`;
-
-                let detail = '';
-                if (latest.type === 'tabo') detail = `Breakout of $${latest.level.toFixed(2)} · RSI ${latest.rsi.toFixed(0)}`;
-                else if (latest.type === 'momentum') detail =
-                    `Pullback to EMA $${latest.ema.toFixed(2)} / ALMA $${latest.alma.toFixed(2)}`;
-                else if (latest.type === 'bounce') detail = `Bounce off $${latest.level.toFixed(2)} with divergence`;
-
-                playDisplay.innerHTML = `
-                    <div class="pattern-box ${latest.direction === 'long' ? 'bullish' : 'bearish'}">
-                        <div class="label">${emoji} ${latest.type.toUpperCase()} — ${latest.direction.toUpperCase()}</div>
-                        <div style="font-size:11px;color:#94a3b8;margin-top:2px;">
-                            Entry: $${latest.price.toFixed(2)} · ${detail}
-                        </div>
-                        <div style="font-size:10px;color:#64748b;margin-top:4px;">
-                            ⚡ Confidence: ${latest.type === 'tabo' ? 'High' : latest.type === 'momentum' ? 'Medium' : 'High'}
-                        </div>
-                    </div>
-                `;
-
-                plays.push({ ...latest, timestamp: new Date() });
-                if (plays.length > 50) plays.shift();
-
-            } else {
-                currentPlay.textContent = '⏳ No play detected';
-                currentPlay.style.color = '#fbbf24';
-                signalBadge.textContent = '⏳ Monitoring';
-                signalBadge.className = 'signal-badge neutral';
-                playDisplay.innerHTML = `
-                    <div class="pattern-box neutral">
-                        <div class="label">⏳ Monitoring for setups...</div>
-                        <div style="font-size:11px;color:#94a3b8;margin-top:4px;">
-                            Watch for TABO breakouts, Momentum pullbacks, and Bounce plays
-                        </div>
-                    </div>
-                `;
-            }
-
-            const levels = findLevels(prices, 5);
-            if (levels.resistance) {
-                resistanceLevel.textContent = '$' + levels.resistance.toFixed(2);
-                resistance = levels.resistance;
-            }
-            if (levels.support) {
-                supportLevel.textContent = '$' + levels.support.toFixed(2);
-                support = levels.support;
-            }
-
-            const lastIdx = prices.length - 1;
-            if (emaVals[lastIdx]) emaLevel.textContent = '$' + emaVals[lastIdx].toFixed(2);
-            if (almaVals[lastIdx]) almaLevel.textContent = '$' + almaVals[lastIdx].toFixed(2);
-
-            barCountEl.textContent = 'Bars: ' + prices.length;
-            drawChart();
-        }
-
-        // --- Add bar ---
-        function addBar() {
-            barCounter++;
-            const lastClose = closes.length > 0 ? closes[closes.length - 1] : 100;
-            const ohlc = generateOHLC(lastClose);
-
-            opens.push(ohlc.open);
-            highs.push(ohlc.high);
-            lows.push(ohlc.low);
-            closes.push(ohlc.close);
-            prices.push(ohlc.close);
-
-            if (prices.length > MAX_BARS) {
-                prices.shift();
-                opens.shift();
-                highs.shift();
-                lows.shift();
-                closes.shift();
-            }
-            updateData();
-        }
-
-        // --- Set status ---
-        function setStatus(state) {
-            statusIndicator.className = 'status-indicator ' + state;
-            statusText.textContent = state.charAt(0).toUpperCase() + state.slice(1);
-        }
-
-        // --- Controls ---
-        function startSimulation() {
-            if (intervalId) return;
-            isRunning = true;
-            const delay = Math.max(100, 600 / speedFactor);
-            intervalId = setInterval(function() {
-                if (isRunning) {
-                    addBar();
+                const levels = findLevels(prices, 5);
+                if (levels.resistance) {
+                    resistanceLevel.textContent = '$' + levels.resistance.toFixed(2);
+                    resistance = levels.resistance;
                 }
-            }, delay);
-            btnStart.textContent = '⏹ Running';
-            btnStart.className = 'primary running';
-            setStatus('running');
-            debugEl.textContent = '▶ Started at ' + new Date().toLocaleTimeString();
-        }
+                if (levels.support) {
+                    supportLevel.textContent = '$' + levels.support.toFixed(2);
+                    support = levels.support;
+                }
 
-        function pauseSimulation() {
-            isRunning = false;
-            if (intervalId) {
-                clearInterval(intervalId);
-                intervalId = null;
+                const lastIdx = prices.length - 1;
+                if (emaVals[lastIdx]) emaLevel.textContent = '$' + emaVals[lastIdx].toFixed(2);
+                if (almaVals[lastIdx]) almaLevel.textContent = '$' + almaVals[lastIdx].toFixed(2);
+
+                barCountEl.textContent = 'Bars: ' + prices.length;
+                drawChart();
             }
-            btnStart.textContent = '▶ Play';
-            btnStart.className = 'primary';
-            setStatus('paused');
-            debugEl.textContent = '⏸ Paused at ' + new Date().toLocaleTimeString();
-        }
 
-        function toggleSimulation() {
-            if (intervalId) {
-                pauseSimulation();
-            } else {
-                startSimulation();
-            }
-        }
+            // --- Add bar ---
+            function addBar() {
+                barCounter++;
+                const lastClose = closes.length > 0 ? closes[closes.length - 1] : 100;
+                const ohlc = generateOHLC(lastClose);
 
-        function resetSimulation() {
-            pauseSimulation();
-            prices = [];
-            opens = [];
-            highs = [];
-            lows = [];
-            closes = [];
-            rsiVals = [];
-            emaVals = [];
-            almaVals = [];
-            plays = [];
-            signals = [];
-            taboPlays = 0;
-            momentumPlays = 0;
-            bouncePlays = 0;
-            divergencePlays = 0;
-            barCounter = 0;
-
-            for (let i = 0; i < 35; i++) {
-                const ohlc = generateOHLC(closes.length > 0 ? closes[closes.length - 1] : 100);
                 opens.push(ohlc.open);
                 highs.push(ohlc.high);
                 lows.push(ohlc.low);
                 closes.push(ohlc.close);
                 prices.push(ohlc.close);
-            }
-            updateData();
-            btnStart.textContent = '▶ Play';
-            btnStart.className = 'primary';
-            setStatus('stopped');
-            debugEl.textContent = '⟲ Reset at ' + new Date().toLocaleTimeString();
-        }
 
-        function stepBar() {
-            if (intervalId) {
+                if (prices.length > MAX_BARS) {
+                    prices.shift();
+                    opens.shift();
+                    highs.shift();
+                    lows.shift();
+                    closes.shift();
+                }
+                updateData();
+            }
+
+            // --- Set status ---
+            function setStatus(state) {
+                statusIndicator.className = 'status-indicator ' + state;
+                statusText.textContent = state.charAt(0).toUpperCase() + state.slice(1);
+            }
+
+            // --- Controls ---
+            function startSimulation() {
+                if (intervalId) return;
+                isRunning = true;
+                const delay = Math.max(100, 600 / speedFactor);
+                intervalId = setInterval(function() {
+                    if (isRunning) {
+                        addBar();
+                    }
+                }, delay);
+                btnStart.textContent = '⏹ Running';
+                btnStart.className = 'primary running';
+                setStatus('running');
+                debugEl.textContent = '▶ Started at ' + new Date().toLocaleTimeString();
+            }
+
+            function pauseSimulation() {
+                isRunning = false;
+                if (intervalId) {
+                    clearInterval(intervalId);
+                    intervalId = null;
+                }
+                btnStart.textContent = '▶ Play';
+                btnStart.className = 'primary';
+                setStatus('paused');
+                debugEl.textContent = '⏸ Paused at ' + new Date().toLocaleTimeString();
+            }
+
+            function toggleSimulation() {
+                if (intervalId) {
+                    pauseSimulation();
+                } else {
+                    startSimulation();
+                }
+            }
+
+            function resetSimulation() {
                 pauseSimulation();
+                prices = [];
+                opens = [];
+                highs = [];
+                lows = [];
+                closes = [];
+                rsiVals = [];
+                emaVals = [];
+                almaVals = [];
+                plays = [];
+                signals = [];
+                playLogs = { tabo: [], momentum: [], bounce: [], divergence: [] };
+                taboPlays = 0;
+                momentumPlays = 0;
+                bouncePlays = 0;
+                divergencePlays = 0;
+                barCounter = 0;
+
+                for (let i = 0; i < 35; i++) {
+                    const ohlc = generateOHLC(closes.length > 0 ? closes[closes.length - 1] : 100);
+                    opens.push(ohlc.open);
+                    highs.push(ohlc.high);
+                    lows.push(ohlc.low);
+                    closes.push(ohlc.close);
+                    prices.push(ohlc.close);
+                }
+                updateData();
+                updatePlayLogs();
+                btnStart.textContent = '▶ Play';
+                btnStart.className = 'primary';
+                setStatus('stopped');
+                debugEl.textContent = '⟲ Reset at ' + new Date().toLocaleTimeString();
             }
-            addBar();
-            btnStart.textContent = '▶ Play';
-            btnStart.className = 'primary';
-            setStatus('paused');
-            debugEl.textContent = '⏭ Step at ' + new Date().toLocaleTimeString();
-        }
 
-        function cycleSpeed() {
-            const speeds = [1, 2, 4, 8];
-            let idx = speeds.indexOf(speedFactor);
-            idx = (idx + 1) % speeds.length;
-            speedFactor = speeds[idx];
-            btnSpeed.textContent = 'Speed: ' + speedFactor + 'x';
-            if (intervalId) {
-                clearInterval(intervalId);
-                intervalId = null;
-                startSimulation();
+            function stepBar() {
+                if (intervalId) {
+                    pauseSimulation();
+                }
+                addBar();
+                btnStart.textContent = '▶ Play';
+                btnStart.className = 'primary';
+                setStatus('paused');
+                debugEl.textContent = '⏭ Step at ' + new Date().toLocaleTimeString();
             }
-        }
 
-        function toggleLevels() {
-            showLevels = !showLevels;
-            btnLevels.textContent = showLevels ? 'S/R: ON' : 'S/R: OFF';
-            drawChart();
-        }
-
-        // --- Handle resize ---
-        function handleResize() {
-            drawChart();
-        }
-
-        // --- Init ---
-        function init() {
-            // Seed initial data
-            for (let i = 0; i < 35; i++) {
-                const ohlc = generateOHLC(closes.length > 0 ? closes[closes.length - 1] : 100);
-                opens.push(ohlc.open);
-                highs.push(ohlc.high);
-                lows.push(ohlc.low);
-                closes.push(ohlc.close);
-                prices.push(ohlc.close);
+            function cycleSpeed() {
+                const speeds = [1, 2, 4, 8];
+                let idx = speeds.indexOf(speedFactor);
+                idx = (idx + 1) % speeds.length;
+                speedFactor = speeds[idx];
+                btnSpeed.textContent = 'Speed: ' + speedFactor + 'x';
+                if (intervalId) {
+                    clearInterval(intervalId);
+                    intervalId = null;
+                    startSimulation();
+                }
             }
-            updateData();
 
-            // Event listeners
-            btnStart.addEventListener('click', toggleSimulation);
-            btnPause.addEventListener('click', pauseSimulation);
-            btnReset.addEventListener('click', resetSimulation);
-            btnSpeed.addEventListener('click', cycleSpeed);
-            btnLevels.addEventListener('click', toggleLevels);
-            btnStep.addEventListener('click', stepBar);
+            function toggleLevels() {
+                showLevels = !showLevels;
+                btnLevels.textContent = showLevels ? 'S/R: ON' : 'S/R: OFF';
+                drawChart();
+            }
 
-            // Handle resize
-            window.addEventListener('resize', handleResize);
+            // --- Handle resize ---
+            function handleResize() {
+                drawChart();
+            }
 
-            // Start automatically
-            startSimulation();
+            // --- Initialize ---
+            function init() {
+                // Seed initial data
+                for (let i = 0; i < 35; i++) {
+                    const ohlc = generateOHLC(closes.length > 0 ? closes[closes.length - 1] : 100);
+                    opens.push(ohlc.open);
+                    highs.push(ohlc.high);
+                    lows.push(ohlc.low);
+                    closes.push(ohlc.close);
+                    prices.push(ohlc.close);
+                }
 
-            // Force updates
+                // Calculate initial indicators
+                rsiVals = calculateRSI(prices, 14);
+                emaVals = calculateEMA(prices, 9);
+                almaVals = calculateALMA(prices, 9, 6, 0.85);
+
+                // Draw initial chart
+                drawChart();
+                barCountEl.textContent = 'Bars: ' + prices.length;
+                debugEl.textContent = '✅ Initialized with ' + prices.length + ' bars';
+
+                // Event listeners
+                btnStart.addEventListener('click', toggleSimulation);
+                btnPause.addEventListener('click', pauseSimulation);
+                btnReset.addEventListener('click', resetSimulation);
+                btnSpeed.addEventListener('click', cycleSpeed);
+                btnLevels.addEventListener('click', toggleLevels);
+                btnStep.addEventListener('click', stepBar);
+
+                // Handle resize
+                window.addEventListener('resize', handleResize);
+
+                // Start automatically after a short delay
+                setTimeout(function() {
+                    startSimulation();
+                    // Add a few bars to get things moving
+                    setTimeout(function() {
+                        addBar();
+                        addBar();
+                        addBar();
+                    }, 300);
+                }, 500);
+
+                console.log('✅ GMMG Strategy Visualizer initialized!');
+                console.log('📊 Bars:', prices.length);
+            }
+
+            // Run when DOM is ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+
+            // Also run after a short delay to ensure canvas is ready
             setTimeout(function() {
-                addBar();
-                addBar();
-                addBar();
-            }, 200);
+                if (!chartInitialized) {
+                    drawChart();
+                }
+            }, 100);
 
-            console.log('✅ GMMG Strategy Visualizer with Candlesticks initialized!');
-            console.log('📊 Bars:', prices.length);
-            console.log('🔄 Status: Running');
-        }
-
-        // Run when DOM is ready
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', init);
-        } else {
-            init();
-        }
+        })();
     </script>
 
 </body>
